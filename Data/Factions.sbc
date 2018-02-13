@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<Definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Factions>
+    <Faction Tag="FTRA" Founder="G'Thoth">
+      <Id>
+        <TypeId>MyObjectBuilder_FactionDefinition</TypeId>
+        <SubtypeId>FreeTraders</SubtypeId>
+      </Id>
+      <DisplayName>Free Trader Association</DisplayName>
+      <IsDefault>true</IsDefault>
+      <DefaultRelation>Neutral</DefaultRelation>
+      <Description>The Free Trader Association</Description>
+    </Faction>
+
+    <Faction Tag="IEFA" Founder="John Sheridan">
+      <Id>
+        <TypeId>MyObjectBuilder_FactionDefinition</TypeId>
+        <SubtypeId>EarthMilitary</SubtypeId>
+      </Id>
+      <DisplayName>Earth Force Alliance</DisplayName>
+      <IsDefault>true</IsDefault>
+      <DefaultRelation>Neutral</DefaultRelation>
+      <Description>Earth Force Alliance</Description>
+    </Faction>
+
+    <Faction Tag="IEEF" Founder="Larz Eklenmblurg">
+      <Id>
+        <TypeId>MyObjectBuilder_FactionDefinition</TypeId>
+        <SubtypeId>EarthExplorers</SubtypeId>
+      </Id>
+      <DisplayName>Earth Expeditionary Forces</DisplayName>
+      <IsDefault>true</IsDefault>
+      <DefaultRelation>Neutral</DefaultRelation>
+      <Description>Earth Expeditionary Forces</Description>
+    </Faction>
+
+    <Faction Tag="XNOS" Founder="G'Nogroth">
+      <Id>
+        <TypeId>MyObjectBuilder_FactionDefinition</TypeId>
+        <SubtypeId>XenosFriendly</SubtypeId>
+      </Id>
+      <DisplayName>Xeno Galactica Alliance</DisplayName>
+      <IsDefault>true</IsDefault>
+      <DefaultRelation>Neutral</DefaultRelation>
+      <Description>Aliens</Description>
+    </Faction>
+
+    <Faction Tag="SHVN" Founder="Xi'Lstak">
+      <Id>
+        <TypeId>MyObjectBuilder_FactionDefinition</TypeId>
+        <SubtypeId>XenosHostile</SubtypeId>
+      </Id>
+      <DisplayName>Shivans</DisplayName>
+      <IsDefault>true</IsDefault>
+      <DefaultRelation>Neutral</DefaultRelation>
+      <Description>UNKNOWN ENTITIES</Description>
+    </Faction>
+
+    <Faction Tag="SPRT" Founder="Space Pirates">
+      <Id>
+        <TypeId>MyObjectBuilder_FactionDefinition</TypeId>
+        <SubtypeId>SpacePirates</SubtypeId>
+      </Id>
+      <DisplayName>DisplayName_Faction_SpacePirates</DisplayName>
+      <IsDefault>true</IsDefault>
+      <Description>Space Pirate Raiders</Description>
+    </Faction>
+
+  </Factions>
+</Definitions>

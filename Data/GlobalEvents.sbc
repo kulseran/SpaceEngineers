@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<Definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <GlobalEvents>
+    <GlobalEvent>
+      <Id>
+        <TypeId>EventDefinition</TypeId>
+        <SubtypeId>FSSpawnerTick</SubtypeId>
+      </Id>
+      <MinActivationTimeMs>50000</MinActivationTimeMs>
+      <MaxActivationTimeMs>100000</MaxActivationTimeMs>
+      <FirstActivationTimeMs>3000</FirstActivationTimeMs>
+    </GlobalEvent>
+    <GlobalEvent>
+      <Id>
+        <TypeId>EventDefinition</TypeId>
+        <SubtypeId>April2014</SubtypeId>
+      </Id>
+      <MinActivationTimeMs>1000</MinActivationTimeMs>
+      <MaxActivationTimeMs>1000</MaxActivationTimeMs>
+    </GlobalEvent>
+  </GlobalEvents>
+</Definitions>
