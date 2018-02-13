@@ -24,6 +24,8 @@ using VRageMath;
 namespace FSTC {
 
   public class SpawnManager {
+    
+    private static readonly string EVENT_SPAWN = "SpawnManager::Spawn";
 
 		// Spawner Timing
 		int spawnTickIntervalMin = 600; //Placeholder value. Real value is pulled from GlobalEvents.sbc
@@ -32,8 +34,7 @@ namespace FSTC {
     // Spawner Prefab Data
     private List<MySpawnGroupDefinition> m_spawnGroups = new List<MySpawnGroupDefinition>();
     private int m_spawnerCost = 0;
-    private string m_factionTag;
-    private long m_factionFounder;
+    private IMyFaction m_faction;
 
     // Player Ship Tracker
 
@@ -44,15 +45,10 @@ namespace FSTC {
      * If no spawn groups exist in the SpawnGroups.sbc file, then this spawner
      * becomes premanently inactive.
      */
-    public void Initialize(string factionTag) {
-      if (factionTag == null) {
-        m_factionTag = "SPRT";
-      } else {
-        m_factionTag = factionTag;
-      }
+    public SpawnManager(IMyFaction factionOwner, List<FSTCData.SpawnedShip> savedSpawns) {
+      m_faction = factionOwner;
       ReadSpawnConfig();
       GetAllSpawnGroups();
-      GetFounder();
       if (m_spawnGroups.Count() > 0) {
         RegisterNextSpawn();
       }
@@ -70,7 +66,7 @@ namespace FSTC {
      * Event callback, spawns a round of NPC ships for the faction.
      * Registers the next spawn event.
      */
-    public void Event_SpawnNPCShips() {
+    public void Event_SpawnNPCShips(object unused) {
       SpawnForGroup(GetRandomSpawnGroup());
       RegisterNextSpawn();
     }
@@ -130,7 +126,7 @@ namespace FSTC {
      * Generate the prefab
      */
     private void SpawnCargoShip(string prefab, Vector3D spawnCoords, Vector3D despawnCoords, float prefabSpeed, string beaconName) {
-      Util.Log("Spawning Prefab ::" + prefab + ":: for faction " + m_factionTag);
+      Util.Log("Spawning Prefab ::" + prefab + ":: for faction " + m_faction.Tag);
       Vector3D spawnFacing = Vector3D.Normalize(despawnCoords - spawnCoords);
       List<IMyCubeGrid> tempSpawningList = new List<IMyCubeGrid>();
       MyAPIGateway.PrefabManager.SpawnPrefab(
@@ -141,7 +137,7 @@ namespace FSTC {
           up: new Vector3D(0,1,0),
           spawningOptions: SpawningOptions.SetNeutralOwner | SpawningOptions.RotateFirstCockpitTowardsDirection | SpawningOptions.SpawnRandomCargo,
           beaconName: beaconName,
-          ownerId: m_factionFounder,
+          ownerId: m_faction.FounderId,
           updateSync: false);
     }
 
@@ -167,7 +163,7 @@ namespace FSTC {
      */
     private void GetAllSpawnGroups() {
       var allSpawnGroups = MyDefinitionManager.Static.GetSpawnGroupDefinitions();
-      string tag = "(" + m_factionTag + ")";
+      string tag = "(" + m_faction.Tag + ")";
       foreach (var spawnGroup in allSpawnGroups) {
         if (spawnGroup.IsEncounter) {
           continue;
@@ -180,15 +176,7 @@ namespace FSTC {
         // Compute the total cost of all the spawners in order to be able to pick a random group.
         m_spawnerCost += (Int32)Math.Ceiling(spawnGroup.Frequency);
       }
-      Util.Log("Found " + m_spawnGroups.Count() + " " + m_factionTag + " SpawnGroups.");
-    }
-
-    /**
-     * Determine the founder entity for the faction we were initialized with.
-     * This is used to set the correct ownership on the spawned ships.
-     */
-    private void GetFounder() {
-      m_factionFounder = MyAPIGateway.Session.Factions.TryGetFactionByTag(m_factionTag).FounderId;
+      Util.Log("Found " + m_spawnGroups.Count() + " " + m_faction.Tag + " SpawnGroups.");
     }
   }
 

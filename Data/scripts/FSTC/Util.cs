@@ -37,5 +37,31 @@ namespace FSTC {
         MyVisualScriptLogicProvider.ShowNotificationToAll("FSTC: " + argument, 10000, "White");
       }
     }
+
+    /**
+     * Logging utlility
+     */
+    public static void Warning(string argument) {
+      if (!LOGGING_ENABLED) {
+        return;
+      }
+      MyLog.Default.WriteLineAndConsole("FSTC: (warn) " + argument);
+      if (DEBUG_MODE) {
+        MyVisualScriptLogicProvider.ShowNotificationToAll("FSTC: " + argument, 10000, "Yellow");
+      }
+    }
+
+    /**
+     * Logging utlility
+     */
+    public static void Error(string argument) {
+      if (!LOGGING_ENABLED) {
+        return;
+      }
+      MyLog.Default.WriteLineAndConsole("FSTC: (error) " + argument);
+      if (DEBUG_MODE) {
+        MyVisualScriptLogicProvider.ShowNotificationToAll("FSTC: " + argument, 10000, "Red");
+      }
+    }
   }
 }  // namespace FSTC

@@ -10,34 +10,56 @@ namespace FSTC {
 
     private readonly string SAVEFILE_NAME = "FSTC.xml";
 
-    private List<SpawnManager> m_spawnManagers = new List<SpawnManager>();
+    private List<EmpireManager> m_empires = new List<EmpireManager>();
+    FSTCData m_data = new FSTCData();
 
+    /**
+     *
+     */
     public override void BeforeStart() {
       InitializeMod();
     }
 
+    /**
+     *
+     */
     public override void LoadData() {
-      FSTCData data = new FSTCData();
+      if (LoadSaveFile()) {
+        Util.Log("Resuming save at tick: " + m_data.currentTick);
+      } else {
+        Util.Warning("No save data for FSTC mod initializing fresh campaign.");
+        m_data = FstcInitialData.Get();
+      }
 
+      Util.Initialize(m_data.currentTick);
+    }
+
+    /**
+     *
+     */
+    private bool LoadSaveFile() {
       if (MyAPIGateway.Utilities.FileExistsInWorldStorage(SAVEFILE_NAME, typeof(FSTCData))) {
         try {
           TextReader reader = MyAPIGateway.Utilities.ReadFileInWorldStorage(SAVEFILE_NAME, typeof(FSTCData));
-          data = MyAPIGateway.Utilities.SerializeFromXML<FSTCData>(reader.ReadToEnd());
+          m_data = MyAPIGateway.Utilities.SerializeFromXML<FSTCData>(reader.ReadToEnd());
           reader.Close();
+          return true;
         } catch {
-          Util.Log("Corrupt save data.");
+          Util.Error("Corrupt save data.");
         }
-      } else {
-        Util.Log("No save data for FSTC mod.");
       }
-
-      Util.Log("Loading tick: " + data.currentTick);
-      Util.Initialize(data.currentTick);
+      return false;
     }
 
+    /**
+     *
+     */
     public override void SaveData() {
       FSTCData data = new FSTCData();
       data.currentTick = Util.currentTick;
+      foreach (EmpireManager empire in m_empires) {
+        data.empires.Add(empire.GetSave());
+      }
 
       TextWriter writer = MyAPIGateway.Utilities.WriteFileInWorldStorage(SAVEFILE_NAME, typeof(FSTCData));
       writer.Write(MyAPIGateway.Utilities.SerializeToXML<FSTCData>(data));
@@ -63,16 +85,15 @@ namespace FSTC {
       if (!MyAPIGateway.Multiplayer.IsServer) {
         return;
       }
-      Diplomacy.Initialize();
-
-      foreach (string faction in Diplomacy.KNOWN_FACTION_TAGS) {
-        SpawnManager manager = new SpawnManager();
-        manager.Initialize(faction);
-        m_spawnManagers.Add(manager);
-
-        Diplomacy.Initialize();
+      foreach (FSTCData.EmpireData empireData in m_data.empires) {
+        m_empires.Add(new EmpireManager(empireData));
       }
-      Util.Log("Hello World");
+      Diplomacy.Initialize();
+      foreach (EmpireManager empire in m_empires) {
+        empire.Initialize();
+      }
+
+      Util.Log("Welcome to FSTC.");
     }
   }
 

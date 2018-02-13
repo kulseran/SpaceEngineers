@@ -30,6 +30,7 @@ namespace FSTC {
       }
 
       public string empireTag = "";
+      public int empireType = 0;
       public int size = 0;
       public int credits = 0;
       public BoundingBoxD bounds;
