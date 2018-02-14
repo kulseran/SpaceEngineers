@@ -15,9 +15,9 @@ namespace FSTC {
     }
 
     [XmlType("FSTCSpawnedEncounter")]
-    public class EncounterMarker {
+    public class SpawnedStructure {
       public BoundingBoxD bounds;
-      public int encounterId;
+      public long entityId;
     }
   
     [XmlType("FSTCEmpireData")]
@@ -37,7 +37,7 @@ namespace FSTC {
       public List<EmpireStanding> standings = new List<EmpireStanding>();
 
       public List<SpawnedShip> fleet = new List<SpawnedShip>();
-      public List<EncounterMarker> presence = new List<EncounterMarker>();
+      public List<SpawnedStructure> presence = new List<SpawnedStructure>();
     }
 
     public long currentTick = 0;

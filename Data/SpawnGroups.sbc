@@ -5,9 +5,11 @@
     <SpawnGroup>
       <Id>
         <TypeId>SpawnGroupDefinition</TypeId>
-        <SubtypeId>(FTRA) Cargoship</SubtypeId>
+        <SubtypeId>(SPRT) [Type:SS:HQ,Cost:1000000] Incisor_mk.1</SubtypeId>
       </Id>
       <Icon>Textures\GUI\Icons\Fake.dds</Icon>
+      <BeaconText>Keep Out</BeaconText>
+      <IsPirate>true</IsPirate>
       <IsEncounter>false</IsEncounter>
       <Speed>0.0</Speed>
       <Frequency>100</Frequency>

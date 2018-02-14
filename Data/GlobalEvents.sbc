@@ -6,8 +6,8 @@
         <TypeId>EventDefinition</TypeId>
         <SubtypeId>FSSpawnerTick</SubtypeId>
       </Id>
-      <MinActivationTimeMs>50000</MinActivationTimeMs>
-      <MaxActivationTimeMs>100000</MaxActivationTimeMs>
+      <MinActivationTimeMs>5000</MinActivationTimeMs>
+      <MaxActivationTimeMs>10000</MaxActivationTimeMs>
       <FirstActivationTimeMs>3000</FirstActivationTimeMs>
     </GlobalEvent>
     <GlobalEvent>

@@ -148,13 +148,16 @@
     <None Include=".git\objects\df\e0770424b2a19faf507a501ebfc23be8f54e7b" />
     <None Include=".git\refs\heads\master" />
     <None Include="Data\Factions.sbc" />
-    <None Include="Data\GlobalEvents.sbc" />
+    <None Include="Data\GlobalEvents.sbc">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Data\SpawnGroups.sbc" />
     <None Include="deploy.sh" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\scripts\FSTC\Diplomacy.cs" />
     <Compile Include="Data\scripts\FSTC\EmpireManager.cs" />
+    <Compile Include="Data\scripts\FSTC\EncounterManager.cs" />
     <Compile Include="Data\scripts\FSTC\EventManager.cs" />
     <Compile Include="Data\scripts\FSTC\FSTCData.cs" />
     <Compile Include="Data\scripts\FSTC\FSTCDataInit.cs" />

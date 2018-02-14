@@ -1,8 +1,12 @@
 using VRage.Game.ModAPI;
+using VRageMath;
 
 namespace FSTC {
 
   public class EmpireManager {
+
+    private static readonly Vector3D MAX_STRUCTURE_DISPLACEMENT = new Vector3D(250.0, 250.0, 250.0);
+    private static readonly Vector3D MAX_STRUCTURE_OWNERSHIP = new Vector3D(50000.0, 50000.0, 50000.0);
 
     private FSTCData.EmpireData m_data;
     private IMyFaction m_myFaction = null;
@@ -14,10 +18,11 @@ namespace FSTC {
       if (m_myFaction == null) {
         Util.Error("Faction [" + m_data.empireTag + "] not found. Empire will stagnate.");
       }
-      m_shipManager = new SpawnManager(m_myFaction, m_data.fleet);
+      m_shipManager = new SpawnManager(m_myFaction, m_data.presence, m_data.fleet);
     }
 
     public FSTCData.EmpireData GetSave() {
+      m_shipManager.Save(out m_data.presence, out m_data.fleet);
       return m_data;
     }
 
@@ -27,9 +32,16 @@ namespace FSTC {
       }
     }
 
-
     private void SpawnHQ() {
+      SpawnManager.GroupInfo info;
+      m_shipManager.GetRandomSpawnGroup(SpawnManager.SpawnerType.STATIC_STRUCTURE_HQ, 999999999, out info);
+      Vector3D teritoryCenter = m_data.bounds.Min + (m_data.bounds.Max - m_data.bounds.Min) * 0.5;
+      BoundingBoxD hqLocation = new BoundingBoxD(teritoryCenter - MAX_STRUCTURE_DISPLACEMENT, teritoryCenter + MAX_STRUCTURE_DISPLACEMENT);
+      m_shipManager.SpawnForRegion(info, SpawnManager.EncounterType.Static, hqLocation);
+    }
 
+    BoundingBoxD GetDefaultOwnershipBounds(Vector3D center) {
+       return new BoundingBoxD(center - MAX_STRUCTURE_OWNERSHIP, center + MAX_STRUCTURE_OWNERSHIP);
     }
   };
 
