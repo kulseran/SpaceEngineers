@@ -11,7 +11,7 @@ namespace FSTC {
       public long entityId = 0;
       public long antennaEntityId = 0;
       public long despawnTick = 0;
-      public bool isEncounter = false;
+      public int encounterType = 0;
     }
 
     [XmlType("FSTCSpawnedEncounter")]

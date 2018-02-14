@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Sandbox.Definitions;
+using Sandbox.ModAPI;
 using VRage.Game;
 using VRage.Game.ModAPI;
+using VRage.ModAPI;
 using VRageMath;
 
 namespace FSTC {
@@ -23,7 +25,9 @@ namespace FSTC {
      */
     public enum EncounterType {
       Static,
-      Transient
+      TransientEncounter,
+      TransientCargoship,
+      TransientAttackship,
     };
 
     /**
@@ -254,7 +258,7 @@ namespace FSTC {
         // TODO: tranform sub-spawns correctly
         Vector3D prefabSpawnPos = spawnCenter;
         Vector3D prefabDeSpawnPos = spawnCenter + (lookDir * 1000.0);
-        SpawnCargoShip(prefab.SubtypeId, prefabSpawnPos, prefabDeSpawnPos, prefab.Speed, prefab.BeaconText, encounterType);
+        SpawnPrefab(prefab, prefabSpawnPos, prefabDeSpawnPos, encounterType);
       }
     }
 
@@ -274,25 +278,42 @@ namespace FSTC {
     /**
      * Generate the prefab
      */
-    private void SpawnCargoShip(string prefab, Vector3D spawnCoords, Vector3D despawnCoords, float prefabSpeed, string beaconName, EncounterType encounterType) {
+    private void SpawnPrefab(MySpawnGroupDefinition.SpawnGroupPrefab prefab, Vector3D spawnCoords, Vector3D despawnCoords, EncounterType encounterType) {
       Util.Log("Spawning Prefab ::" + prefab + ":: for faction " + m_faction.Tag);
       Vector3D spawnFacing = Vector3D.Normalize(despawnCoords - spawnCoords);
       List<IMyCubeGrid> tempSpawningList = new List<IMyCubeGrid>();
 
       MyAPIGateway.PrefabManager.SpawnPrefab(
           resultList: tempSpawningList,
-          prefabName: prefab,
+          prefabName: prefab.SubtypeId,
           position: spawnCoords,
           forward: spawnFacing,
           up: new Vector3D(0,1,0),
           spawningOptions: SpawningOptions.SetNeutralOwner | SpawningOptions.RotateFirstCockpitTowardsDirection | SpawningOptions.SpawnRandomCargo,
-          beaconName: beaconName,
+          beaconName: prefab.BeaconText,
           ownerId: m_faction.FounderId,
           updateSync: false,
           callback: () => SpawnerCallback(encounterType, tempSpawningList));
     }
 
     public void SpawnerCallback(EncounterType encounterType, List<IMyCubeGrid> spawnList) {
+      foreach (IMyCubeGrid grid in spawnList) {
+        grid.ChangeGridOwnership(m_faction.FounderId, MyOwnershipShareModeEnum.None);
+
+        IMyRemoteControl firstRemote = null;
+        List<IMySlimBlock> blocks = new List<IMySlimBlock>();
+        grid.GetBlocks(blocks);
+        foreach (IMySlimBlock block in blocks) {
+          firstRemote = block.FatBlock as IMyRemoteControl;
+          if (firstRemote != null) {
+            break;
+          }
+        }
+        LaunchDrone(encounterType, firstRemote, (IMyEntity) firstRemote ?? (IMyEntity) grid);
+      }
+    }
+
+    void LaunchDrone(EncounterType encounterType, IMyRemoteControl remote, IMyEntity entity) {
 
     }
 

@@ -5,16 +5,16 @@
     <SpawnGroup>
       <Id>
         <TypeId>SpawnGroupDefinition</TypeId>
-        <SubtypeId>(SPRT) [Type:SS:HQ,Cost:1000000] Incisor_mk.1</SubtypeId>
+        <SubtypeId>(SPRT) [Type:SS:HQ,Cost:1000000] Pirate HQ1</SubtypeId>
       </Id>
       <Icon>Textures\GUI\Icons\Fake.dds</Icon>
-      <BeaconText>Keep Out</BeaconText>
+      <BeaconText>Pirate HQ - Keep Out</BeaconText>
       <IsPirate>true</IsPirate>
       <IsEncounter>false</IsEncounter>
       <Speed>0.0</Speed>
       <Frequency>100</Frequency>
       <Prefabs>
-        <Prefab SubtypeId="Incisor_mk.1">
+        <Prefab SubtypeId="FSTC Comsat">
           <Position>
             <X>0.0</X>
             <Y>0.0</Y>
