@@ -7,6 +7,7 @@ using VRage.Game;
 using VRage.Game.ModAPI;
 using VRage.ModAPI;
 using VRageMath;
+using static FSTC.FSTCData;
 
 namespace FSTC {
 
@@ -147,8 +148,8 @@ namespace FSTC {
     private List<GroupInfo> m_spawnGroups = new List<GroupInfo>();
     private IMyFaction m_faction;
 
-    private List<FSTCData.SpawnedStructure> m_savedStatics = new List<FSTCData.SpawnedStructure>();
-    private List<FSTCData.SpawnedShip> m_savedDynamics = new List<FSTCData.SpawnedShip>();
+    private List<SpawnedShip> m_savedDynamics = new List<SpawnedShip>();
+    private EmpireData m_empireData;
 
     // Player Ship Tracker
 
@@ -159,17 +160,11 @@ namespace FSTC {
      * If no spawn groups exist in the SpawnGroups.sbc file, then this spawner
      * becomes premanently inactive.
      */
-    public SpawnManager(IMyFaction factionOwner, List<FSTCData.SpawnedStructure> savedStatics, List<FSTCData.SpawnedShip> savedDynamics) {
+    public SpawnManager(IMyFaction factionOwner, EmpireData empireData) {
       m_faction = factionOwner;
-      m_savedStatics = savedStatics;
-      m_savedDynamics = savedDynamics;
+      m_empireData = empireData;
       ReadSpawnConfig();
       GetAllSpawnGroups();
-    }
-
-    public void Save(out List<FSTCData.SpawnedStructure> savedStatics, out List<FSTCData.SpawnedShip> savedDynamics) {
-      savedStatics = m_savedStatics;
-      savedDynamics = m_savedDynamics;
     }
 
     public void GetRandomSpawnGroup(SpawnerClass spawnClass, int maxCost, out GroupInfo info) {
@@ -211,7 +206,7 @@ namespace FSTC {
      * Enqueues an event to trigger another wave of spawning at a random interval into the future.
      */
     private void RegisterNextSpawn() {
-      long targetTick = Util.currentTick + Util.rand.Next(spawnTickIntervalMin, spawnTickIntervalMax);
+      long targetTick = GlobalData.world.currentTick + Util.rand.Next(spawnTickIntervalMin, spawnTickIntervalMax);
       EventManager.AddEvent(targetTick, Event_SpawnNPCShips);
     }
 
@@ -279,7 +274,7 @@ namespace FSTC {
      * Generate the prefab
      */
     private void SpawnPrefab(MySpawnGroupDefinition.SpawnGroupPrefab prefab, Vector3D spawnCoords, Vector3D despawnCoords, EncounterType encounterType) {
-      Util.Log("Spawning Prefab ::" + prefab + ":: for faction " + m_faction.Tag);
+      Util.Log("Spawning Prefab ::" + prefab.SubtypeId + ":: for faction " + m_faction.Tag);
       Vector3D spawnFacing = Vector3D.Normalize(despawnCoords - spawnCoords);
       List<IMyCubeGrid> tempSpawningList = new List<IMyCubeGrid>();
 
@@ -347,9 +342,6 @@ namespace FSTC {
       var allSpawnGroups = MyDefinitionManager.Static.GetSpawnGroupDefinitions();
       string tag = "(" + m_faction.Tag + ")";
       foreach (var spawnGroup in allSpawnGroups) {
-        if (spawnGroup.IsEncounter) {
-          continue;
-        }
         if (!spawnGroup.Id.SubtypeName.Contains(tag)) {
           continue;
         }

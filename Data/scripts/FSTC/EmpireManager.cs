@@ -1,5 +1,7 @@
+using Sandbox.ModAPI;
 using VRage.Game.ModAPI;
 using VRageMath;
+using static FSTC.FSTCData;
 
 namespace FSTC {
 
@@ -12,22 +14,17 @@ namespace FSTC {
     private IMyFaction m_myFaction = null;
     private SpawnManager m_shipManager;
 
-    public EmpireManager(FSTCData.EmpireData empire) {
+    public EmpireManager(EmpireData empire) {
       m_data = empire;
-      m_myFaction = MyAPIGateway.Session.Factions.TryGetFactionByTag(m_data.empireTag);
+      m_data.m_faction = MyAPIGateway.Session.Factions.TryGetFactionByTag(m_data.empireTag);
       if (m_myFaction == null) {
         Util.Error("Faction [" + m_data.empireTag + "] not found. Empire will stagnate.");
       }
-      m_shipManager = new SpawnManager(m_myFaction, m_data.presence, m_data.fleet);
-    }
-
-    public FSTCData.EmpireData GetSave() {
-      m_shipManager.Save(out m_data.presence, out m_data.fleet);
-      return m_data;
+      m_shipManager = new SpawnManager(m_myFaction, m_data);
     }
 
     public void Initialize() {
-      if (m_data.presence.Count == 0) {
+      if (m_data.encounters.Count == 0) {
         SpawnHQ();
       }
     }

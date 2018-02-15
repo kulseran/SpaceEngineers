@@ -10,9 +10,6 @@ namespace FSTC {
 
     private readonly string SAVEFILE_NAME = "FSTC.xml";
 
-    private List<EmpireManager> m_empires = new List<EmpireManager>();
-    FSTCData m_data = new FSTCData();
-
     /**
      *
      */
@@ -25,13 +22,10 @@ namespace FSTC {
      */
     public override void LoadData() {
       if (LoadSaveFile()) {
-        Util.Log("Resuming save at tick: " + m_data.currentTick);
+        Util.Log("Resuming save at tick: " + GlobalData.world.currentTick);
       } else {
         Util.Warning("No save data for FSTC mod initializing fresh campaign.");
-        m_data = FstcInitialData.Get();
       }
-
-      Util.Initialize(m_data.currentTick);
     }
 
     /**
@@ -41,7 +35,7 @@ namespace FSTC {
       if (MyAPIGateway.Utilities.FileExistsInWorldStorage(SAVEFILE_NAME, typeof(FSTCData))) {
         try {
           TextReader reader = MyAPIGateway.Utilities.ReadFileInWorldStorage(SAVEFILE_NAME, typeof(FSTCData));
-          m_data = MyAPIGateway.Utilities.SerializeFromXML<FSTCData>(reader.ReadToEnd());
+          GlobalData.world = MyAPIGateway.Utilities.SerializeFromXML<FSTCData>(reader.ReadToEnd());
           reader.Close();
           return true;
         } catch {
@@ -55,14 +49,8 @@ namespace FSTC {
      *
      */
     public override void SaveData() {
-      FSTCData data = new FSTCData();
-      data.currentTick = Util.currentTick;
-      foreach (EmpireManager empire in m_empires) {
-        data.empires.Add(empire.GetSave());
-      }
-
       TextWriter writer = MyAPIGateway.Utilities.WriteFileInWorldStorage(SAVEFILE_NAME, typeof(FSTCData));
-      writer.Write(MyAPIGateway.Utilities.SerializeToXML<FSTCData>(data));
+      writer.Write(MyAPIGateway.Utilities.SerializeToXML(GlobalData.world));
       writer.Flush();
       writer.Close();
     }
@@ -71,28 +59,14 @@ namespace FSTC {
      * Main entrypoint from Space Engineers
      */
     public override void UpdateBeforeSimulation() {
-      if (!MyAPIGateway.Multiplayer.IsServer) {
-        return;
-      }
-      Util.NextTick();
-      EventManager.TriggerEvents(Util.currentTick);
+      GlobalData.NextTick();
+      EventManager.TriggerEvents(GlobalData.world.currentTick);
     }
 
     /**
      * Initialize the mod
      */
     private void InitializeMod() {
-      if (!MyAPIGateway.Multiplayer.IsServer) {
-        return;
-      }
-      foreach (FSTCData.EmpireData empireData in m_data.empires) {
-        m_empires.Add(new EmpireManager(empireData));
-      }
-      Diplomacy.Initialize();
-      foreach (EmpireManager empire in m_empires) {
-        empire.Initialize();
-      }
-
       Util.Log("Welcome to FSTC.");
     }
   }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
+using VRage.Game.ModAPI;
 using VRageMath;
 
 namespace FSTC {
@@ -14,19 +15,15 @@ namespace FSTC {
       public int encounterType = 0;
     }
 
-    [XmlType("FSTCSpawnedEncounter")]
-    public class SpawnedStructure {
-      public BoundingBoxD bounds;
-      public long entityId;
-    }
-  
     [XmlType("FSTCEmpireData")]
     public class EmpireData {
       
       [XmlType("FSTCEmpireStanding")]
       public class EmpireStanding {
          public string empireTag = "";
-         public int standing = 0;
+         public int reputation = 0;
+         public bool atWar = false;
+         public long inStateTill = 0;
       }
 
       public string empireTag = "";
@@ -36,8 +33,12 @@ namespace FSTC {
       public BoundingBoxD bounds;
       public List<EmpireStanding> standings = new List<EmpireStanding>();
 
-      public List<SpawnedShip> fleet = new List<SpawnedShip>();
-      public List<SpawnedStructure> presence = new List<SpawnedStructure>();
+      public List<SpawnedShip> militaryFleet = new List<SpawnedShip>();
+      public List<SpawnedShip> civilianFleet = new List<SpawnedShip>();
+      public List<SpawnedShip> encounters = new List<SpawnedShip>();
+
+      [XmlIgnore]
+      public IMyFaction m_faction;
     }
 
     public long currentTick = 0;

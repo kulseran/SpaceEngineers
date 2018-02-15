@@ -159,11 +159,11 @@
   <ItemGroup>
     <Compile Include="Data\scripts\FSTC\Diplomacy.cs" />
     <Compile Include="Data\scripts\FSTC\EmpireManager.cs" />
-    <Compile Include="Data\scripts\FSTC\EncounterManager.cs" />
     <Compile Include="Data\scripts\FSTC\EventManager.cs" />
     <Compile Include="Data\scripts\FSTC\FSTCData.cs" />
     <Compile Include="Data\scripts\FSTC\FSTCDataInit.cs" />
     <Compile Include="Data\scripts\FSTC\FSTotalConversion.cs" />
+    <Compile Include="Data\scripts\FSTC\GlobalData.cs" />
     <Compile Include="Data\scripts\FSTC\SpawnManager.cs" />
     <Compile Include="Data\scripts\FSTC\Util.cs" />
   </ItemGroup>

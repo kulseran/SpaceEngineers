@@ -5,27 +5,6 @@ using VRage.Game.ModAPI;
 
 namespace FSTC {
   public static class Diplomacy {
-    public static readonly List<string> KNOWN_FACTION_TAGS = new List<string>() {
-          "SPRT",
-          "FTRA",
-          "IEFA",
-          "IEEF",
-          "XNOS",
-          "SHVN"
-        };
-
-    public static readonly List<string> LAWFUL_FACTION_TAGS = new List<string>() {
-          "FTRA",
-          "IEFA",
-          "IEEF",
-          "XNOS",
-        };
-
-    public static readonly List<string> HOSTILE_FACTION_TAGS = new List<string>() {
-          "SPRT",
-          "SHVN"
-        };
-
     /**
      * Empire classification.
      * Determines how this empire reacts diplomatically to other empires.
