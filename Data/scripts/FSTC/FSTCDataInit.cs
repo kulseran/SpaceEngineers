@@ -28,8 +28,6 @@ namespace FSTC {
       FSTCData.EmpireData ret = new FSTCData.EmpireData();
       ret.empireTag = "SPRT";
       ret.empireType = (int)Diplomacy.EmpireType.TRUE_HOSTILE;
-      ret.credits = 0;
-      ret.size = 0;
       ret.bounds = new BoundingBoxD(new Vector3D(-10000.0, -10000.0, -10000.0), new Vector3D(10000, 10000, 10000));
       return ret;
     }
@@ -38,8 +36,6 @@ namespace FSTC {
       FSTCData.EmpireData ret = new FSTCData.EmpireData();
       ret.empireTag = "SHVN";
       ret.empireType = (int)Diplomacy.EmpireType.TRUE_HOSTILE;
-      ret.credits = 1000;
-      ret.size = 0;
       ret.bounds = new BoundingBoxD(new Vector3D(-10000.0, -10000.0, -10000.0), new Vector3D(10000, 10000, 10000));
       return ret;
     }
@@ -48,8 +44,6 @@ namespace FSTC {
       FSTCData.EmpireData ret = new FSTCData.EmpireData();
       ret.empireTag = "SYND";
       ret.empireType = (int)Diplomacy.EmpireType.HOSTILE;
-      ret.credits = 1000;
-      ret.size = 0;
       ret.bounds = new BoundingBoxD(new Vector3D(-10000.0, -10000.0, -10000.0), new Vector3D(10000, 10000, 10000));
       return ret;
     }
@@ -58,8 +52,6 @@ namespace FSTC {
       FSTCData.EmpireData ret = new FSTCData.EmpireData();
       ret.empireTag = "EIEF";
       ret.empireType = (int)Diplomacy.EmpireType.NEUTRAL;
-      ret.credits = 1000;
-      ret.size = 0;
       ret.bounds = new BoundingBoxD(new Vector3D(-10000.0, -10000.0, -10000.0), new Vector3D(10000, 10000, 10000));
       return ret;
     }
@@ -68,8 +60,6 @@ namespace FSTC {
       FSTCData.EmpireData ret = new FSTCData.EmpireData();
       ret.empireTag = "IFTA";
       ret.empireType = (int)Diplomacy.EmpireType.NEUTRAL;
-      ret.credits = 1000;
-      ret.size = 0;
       ret.bounds = new BoundingBoxD(new Vector3D(-10000.0, -10000.0, -10000.0), new Vector3D(10000, 10000, 10000));
       return ret;
     }
@@ -78,8 +68,6 @@ namespace FSTC {
       FSTCData.EmpireData ret = new FSTCData.EmpireData();
       ret.empireTag = "XGTC";
       ret.empireType = (int)Diplomacy.EmpireType.NEUTRAL;
-      ret.credits = 1000;
-      ret.size = 0;
       ret.bounds = new BoundingBoxD(new Vector3D(-10000.0, -10000.0, -10000.0), new Vector3D(10000, 10000, 10000));
       return ret;
     }
@@ -88,8 +76,6 @@ namespace FSTC {
       FSTCData.EmpireData ret = new FSTCData.EmpireData();
       ret.empireTag = "UEFA";
       ret.empireType = (int)Diplomacy.EmpireType.POLICE;
-      ret.credits = 1000;
-      ret.size = 0;
       ret.bounds = new BoundingBoxD(new Vector3D(-10000.0, -10000.0, -10000.0), new Vector3D(10000, 10000, 10000));
       return ret;
     }

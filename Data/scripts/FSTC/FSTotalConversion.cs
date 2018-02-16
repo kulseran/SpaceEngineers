@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using Sandbox.ModAPI;
 using VRage.Game.Components;
+using static FSTC.FSTCData;
 
 namespace FSTC {
 
@@ -9,6 +10,8 @@ namespace FSTC {
   public class FSTotalConversion : MySessionComponentBase {
 
     private readonly string SAVEFILE_NAME = "FSTC.xml";
+
+    private List<EmpireManager> m_empireManagers = new List<EmpireManager>();
 
     /**
      *
@@ -35,9 +38,12 @@ namespace FSTC {
       if (MyAPIGateway.Utilities.FileExistsInWorldStorage(SAVEFILE_NAME, typeof(FSTCData))) {
         try {
           TextReader reader = MyAPIGateway.Utilities.ReadFileInWorldStorage(SAVEFILE_NAME, typeof(FSTCData));
-          GlobalData.world = MyAPIGateway.Utilities.SerializeFromXML<FSTCData>(reader.ReadToEnd());
+          FSTCData data = MyAPIGateway.Utilities.SerializeFromXML<FSTCData>(reader.ReadToEnd());
           reader.Close();
-          return true;
+          if (data != null) {
+            GlobalData.world = data;
+            return true;
+          }
         } catch {
           Util.Error("Corrupt save data.");
         }
@@ -67,7 +73,15 @@ namespace FSTC {
      * Initialize the mod
      */
     private void InitializeMod() {
-      Util.Log("Welcome to FSTC.");
+      foreach (EmpireData empire in GlobalData.world.empires) {
+        m_empireManagers.Add(new EmpireManager(empire));
+      }
+      foreach (EmpireManager empire in m_empireManagers) {
+        empire.Initialize();
+      }
+      Diplomacy.Initialize();
+
+      Util.Notify("Welcome to FSTC.");
     }
   }
 

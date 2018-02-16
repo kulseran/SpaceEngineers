@@ -146,7 +146,6 @@ namespace FSTC {
     };
 
     private List<GroupInfo> m_spawnGroups = new List<GroupInfo>();
-    private IMyFaction m_faction;
 
     private List<SpawnedShip> m_savedDynamics = new List<SpawnedShip>();
     private EmpireData m_empireData;
@@ -160,8 +159,7 @@ namespace FSTC {
      * If no spawn groups exist in the SpawnGroups.sbc file, then this spawner
      * becomes premanently inactive.
      */
-    public SpawnManager(IMyFaction factionOwner, EmpireData empireData) {
-      m_faction = factionOwner;
+    public SpawnManager(EmpireData empireData) {
       m_empireData = empireData;
       ReadSpawnConfig();
       GetAllSpawnGroups();
@@ -274,7 +272,7 @@ namespace FSTC {
      * Generate the prefab
      */
     private void SpawnPrefab(MySpawnGroupDefinition.SpawnGroupPrefab prefab, Vector3D spawnCoords, Vector3D despawnCoords, EncounterType encounterType) {
-      Util.Log("Spawning Prefab ::" + prefab.SubtypeId + ":: for faction " + m_faction.Tag);
+      Util.Log("Spawning Prefab ::" + prefab.SubtypeId + ":: for faction " + m_empireData.m_faction.Tag);
       Vector3D spawnFacing = Vector3D.Normalize(despawnCoords - spawnCoords);
       List<IMyCubeGrid> tempSpawningList = new List<IMyCubeGrid>();
 
@@ -286,14 +284,14 @@ namespace FSTC {
           up: new Vector3D(0,1,0),
           spawningOptions: SpawningOptions.SetNeutralOwner | SpawningOptions.RotateFirstCockpitTowardsDirection | SpawningOptions.SpawnRandomCargo,
           beaconName: prefab.BeaconText,
-          ownerId: m_faction.FounderId,
+          ownerId: m_empireData.m_faction.FounderId,
           updateSync: false,
           callback: () => SpawnerCallback(encounterType, tempSpawningList));
     }
 
     public void SpawnerCallback(EncounterType encounterType, List<IMyCubeGrid> spawnList) {
       foreach (IMyCubeGrid grid in spawnList) {
-        grid.ChangeGridOwnership(m_faction.FounderId, MyOwnershipShareModeEnum.None);
+        grid.ChangeGridOwnership(m_empireData.m_faction.FounderId, MyOwnershipShareModeEnum.None);
 
         IMyRemoteControl firstRemote = null;
         List<IMySlimBlock> blocks = new List<IMySlimBlock>();
@@ -318,7 +316,7 @@ namespace FSTC {
      */
     private void ReadSpawnConfig() {
       MyGlobalEventDefinition spawnShipGlobalEvent;
-			MyDefinitionManager.Static.TryGetDefinition(new MyDefinitionId(typeof(MyObjectBuilder_GlobalEventBase), "FSSpawnerTick[" + m_faction.Tag + "]"), out spawnShipGlobalEvent);
+			MyDefinitionManager.Static.TryGetDefinition(new MyDefinitionId(typeof(MyObjectBuilder_GlobalEventBase), "FSSpawnerTick[" + m_empireData.m_faction.Tag + "]"), out spawnShipGlobalEvent);
 			if (spawnShipGlobalEvent == null) {
         MyDefinitionManager.Static.TryGetDefinition(new MyDefinitionId(typeof(MyObjectBuilder_GlobalEventBase), "FSSpawnerTick"), out spawnShipGlobalEvent);
       }
@@ -340,7 +338,7 @@ namespace FSTC {
      */
     private void GetAllSpawnGroups() {
       var allSpawnGroups = MyDefinitionManager.Static.GetSpawnGroupDefinitions();
-      string tag = "(" + m_faction.Tag + ")";
+      string tag = "(" + m_empireData.m_faction.Tag + ")";
       foreach (var spawnGroup in allSpawnGroups) {
         if (!spawnGroup.Id.SubtypeName.Contains(tag)) {
           continue;
@@ -386,7 +384,7 @@ namespace FSTC {
         m_spawnGroups.Add(new GroupInfo(cost, spawnClass, spawnType, spawnGroup));
 
       }
-      Util.Log("Found " + m_spawnGroups.Count() + " " + m_faction.Tag + " SpawnGroups.");
+      Util.Log("Found " + m_spawnGroups.Count() + " " + m_empireData.m_faction.Tag + " SpawnGroups.");
     }
   }
 

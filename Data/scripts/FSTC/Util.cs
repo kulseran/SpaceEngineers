@@ -10,6 +10,24 @@ namespace FSTC {
 
     public static Random rand = new Random();
 
+    public static void Notify(string argument) {
+      if (!LOGGING_ENABLED) {
+        return;
+      }
+      if (!DEBUG_MODE) {
+        return;
+      }
+      MyVisualScriptLogicProvider.ShowNotificationToAll("FSTC: " + argument, 10000, "White");
+    }
+
+    public static long TickSeconds(long v) {
+      return v * 60;
+    }
+
+    public static long TickMinutes(long v) {
+      return TickSeconds(60) * v;
+    }
+
     /**
      * Logging utlility
      */
@@ -17,10 +35,7 @@ namespace FSTC {
       if (!LOGGING_ENABLED) {
         return;
       }
-      MyLog.Default.WriteLineAndConsole("FSTC: " + argument);
-      if (DEBUG_MODE) {
-        MyVisualScriptLogicProvider.ShowNotificationToAll("FSTC: " + argument, 10000, "White");
-      }
+      MyLog.Default.WriteLine("FSTC: " + argument);
     }
 
     /**
@@ -31,9 +46,6 @@ namespace FSTC {
         return;
       }
       MyLog.Default.WriteLineAndConsole("FSTC: (warn) " + argument);
-      if (DEBUG_MODE) {
-        MyVisualScriptLogicProvider.ShowNotificationToAll("FSTC: " + argument, 10000, "Yellow");
-      }
     }
 
     /**
@@ -44,9 +56,6 @@ namespace FSTC {
         return;
       }
       MyLog.Default.WriteLineAndConsole("FSTC: (error) " + argument);
-      if (DEBUG_MODE) {
-        MyVisualScriptLogicProvider.ShowNotificationToAll("FSTC: " + argument, 10000, "Red");
-      }
     }
   }
 }  // namespace FSTC
