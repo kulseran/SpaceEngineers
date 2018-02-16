@@ -24,6 +24,10 @@ namespace FSTC {
      *
      */
     public override void LoadData() {
+      if (!MyAPIGateway.Multiplayer.IsServer) {
+        return;
+      }
+      
       if (LoadSaveFile()) {
         Util.Log("Resuming save at tick: " + GlobalData.world.currentTick);
       } else {
@@ -55,6 +59,10 @@ namespace FSTC {
      *
      */
     public override void SaveData() {
+      if (!MyAPIGateway.Multiplayer.IsServer) {
+        return;
+      }
+
       TextWriter writer = MyAPIGateway.Utilities.WriteFileInWorldStorage(SAVEFILE_NAME, typeof(FSTCData));
       writer.Write(MyAPIGateway.Utilities.SerializeToXML(GlobalData.world));
       writer.Flush();

@@ -1,7 +1,5 @@
 using Sandbox.ModAPI;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using VRage.Game.ModAPI;
 using VRageMath;
 using static FSTC.FSTCData;
@@ -167,6 +165,9 @@ namespace FSTC {
     }
 
     private static void TryDeclareWar(EmpireData empireA, EmpireData empireB) {
+      if (!MyAPIGateway.Multiplayer.IsServer) {
+        return;
+      }
       if (empireA.m_faction == null || empireB.m_faction == null) {
         return;
       }
@@ -181,6 +182,9 @@ namespace FSTC {
     }
 
     private static void TryDeclarePeace(EmpireData empireA, EmpireData empireB) {
+      if (!MyAPIGateway.Multiplayer.IsServer) {
+        return;
+      }
       if (empireA.m_faction == null || empireB.m_faction == null) {
         return;
       }

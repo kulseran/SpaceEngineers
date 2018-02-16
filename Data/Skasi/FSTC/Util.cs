@@ -10,6 +10,9 @@ namespace FSTC {
 
     public static Random rand = new Random();
 
+    /**
+     * Display player-visible notification.
+     */
     public static void Notify(string argument) {
       if (!LOGGING_ENABLED) {
         return;
@@ -20,10 +23,16 @@ namespace FSTC {
       MyVisualScriptLogicProvider.ShowNotificationToAll("FSTC: " + argument, 10000, "White");
     }
 
+    /**
+     * Convert seconds to ticks.
+     */
     public static long TickSeconds(long v) {
       return v * 60;
     }
 
+    /**
+     * Convert minutes to ticks.
+     */
     public static long TickMinutes(long v) {
       return TickSeconds(60) * v;
     }

@@ -1,4 +1,3 @@
-
 using VRageMath;
 
 namespace FSTC {
