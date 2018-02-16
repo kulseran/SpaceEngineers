@@ -1,8 +1,6 @@
 using Sandbox.ModAPI;
-using VRage.Game.ModAPI;
 using VRageMath;
 using static FSTC.FSTCData;
-using static FSTC.FSTCData.EmpireData;
 
 namespace FSTC {
 
@@ -34,16 +32,6 @@ namespace FSTC {
       if (m_data.encounters.Count == 0) {
         SpawnHQ();
       }
-      foreach (EmpireData empire in GlobalData.world.empires) {
-        if (empire == m_data) {
-          continue;
-        }
-        EmpireStanding standings = Diplomacy.FindStandings(m_data, empire);
-        if (standings == null) {
-          standings = Diplomacy.GetDefaultStanding(m_data, empire);
-          m_data.standings.Add(standings);
-        }
-      }
     }
 
     private void SpawnHQ() {
@@ -54,7 +42,7 @@ namespace FSTC {
       m_shipManager.SpawnForRegion(info, SpawnManager.EncounterType.Static, hqLocation);
     }
 
-    BoundingBoxD GetDefaultOwnershipBounds(Vector3D center) {
+    private BoundingBoxD GetDefaultOwnershipBounds(Vector3D center) {
        return new BoundingBoxD(center - MAX_STRUCTURE_OWNERSHIP, center + MAX_STRUCTURE_OWNERSHIP);
     }
   };

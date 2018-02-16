@@ -5,16 +5,153 @@
     <SpawnGroup>
       <Id>
         <TypeId>SpawnGroupDefinition</TypeId>
-        <SubtypeId>(SPRT) [Type:SS:HQ,Cost:1000000] Pirate HQ1</SubtypeId>
+        <SubtypeId>(EIEF) [Type:SS:HQ,Cost:1000000] HQ</SubtypeId>
       </Id>
       <Icon>Textures\GUI\Icons\Fake.dds</Icon>
-      <BeaconText>Pirate HQ - Keep Out</BeaconText>
+      <BeaconText>EIEF HQ - Keep Out</BeaconText>
       <IsPirate>true</IsPirate>
       <IsEncounter>false</IsEncounter>
       <Speed>0.0</Speed>
       <Frequency>100</Frequency>
       <Prefabs>
-        <Prefab SubtypeId="FSTC Comsat">
+        <Prefab SubtypeId="FSTC EIEF HQ">
+          <Position>
+            <X>0.0</X>
+            <Y>0.0</Y>
+            <Z>0.0</Z>
+          </Position>
+          <Speed>0</Speed>
+        </Prefab>
+      </Prefabs>
+    </SpawnGroup>
+
+    <SpawnGroup>
+      <Id>
+        <TypeId>SpawnGroupDefinition</TypeId>
+        <SubtypeId>(UEFA) [Type:SS:HQ,Cost:1000000] HQ</SubtypeId>
+      </Id>
+      <Icon>Textures\GUI\Icons\Fake.dds</Icon>
+      <BeaconText>UEFA HQ - Keep Out</BeaconText>
+      <IsPirate>true</IsPirate>
+      <IsEncounter>false</IsEncounter>
+      <Speed>0.0</Speed>
+      <Frequency>100</Frequency>
+      <Prefabs>
+        <Prefab SubtypeId="FSTC UEFA HQ">
+          <Position>
+            <X>0.0</X>
+            <Y>0.0</Y>
+            <Z>0.0</Z>
+          </Position>
+          <Speed>0</Speed>
+        </Prefab>
+      </Prefabs>
+    </SpawnGroup>
+
+    <SpawnGroup>
+      <Id>
+        <TypeId>SpawnGroupDefinition</TypeId>
+        <SubtypeId>(IFTA) [Type:SS:HQ,Cost:1000000] HQ</SubtypeId>
+      </Id>
+      <Icon>Textures\GUI\Icons\Fake.dds</Icon>
+      <BeaconText>IFTA HQ - Keep Out</BeaconText>
+      <IsPirate>true</IsPirate>
+      <IsEncounter>false</IsEncounter>
+      <Speed>0.0</Speed>
+      <Frequency>100</Frequency>
+      <Prefabs>
+        <Prefab SubtypeId="FSTC IFTA HQ">
+          <Position>
+            <X>0.0</X>
+            <Y>0.0</Y>
+            <Z>0.0</Z>
+          </Position>
+          <Speed>0</Speed>
+        </Prefab>
+      </Prefabs>
+    </SpawnGroup>
+
+    <SpawnGroup>
+      <Id>
+        <TypeId>SpawnGroupDefinition</TypeId>
+        <SubtypeId>(SHVN) [Type:SS:HQ,Cost:1000000] HQ</SubtypeId>
+      </Id>
+      <Icon>Textures\GUI\Icons\Fake.dds</Icon>
+      <BeaconText>SHVN HQ - Keep Out</BeaconText>
+      <IsPirate>true</IsPirate>
+      <IsEncounter>false</IsEncounter>
+      <Speed>0.0</Speed>
+      <Frequency>100</Frequency>
+      <Prefabs>
+        <Prefab SubtypeId="FSTC SHVN HQ">
+          <Position>
+            <X>0.0</X>
+            <Y>0.0</Y>
+            <Z>0.0</Z>
+          </Position>
+          <Speed>0</Speed>
+        </Prefab>
+      </Prefabs>
+    </SpawnGroup>
+
+    <SpawnGroup>
+      <Id>
+        <TypeId>SpawnGroupDefinition</TypeId>
+        <SubtypeId>(SPRT) [Type:SS:HQ,Cost:1000000] HQ</SubtypeId>
+      </Id>
+      <Icon>Textures\GUI\Icons\Fake.dds</Icon>
+      <BeaconText>SPRT HQ - Keep Out</BeaconText>
+      <IsPirate>true</IsPirate>
+      <IsEncounter>false</IsEncounter>
+      <Speed>0.0</Speed>
+      <Frequency>100</Frequency>
+      <Prefabs>
+        <Prefab SubtypeId="FSTC SPRT HQ">
+          <Position>
+            <X>0.0</X>
+            <Y>0.0</Y>
+            <Z>0.0</Z>
+          </Position>
+          <Speed>0</Speed>
+        </Prefab>
+      </Prefabs>
+    </SpawnGroup>
+
+    <SpawnGroup>
+      <Id>
+        <TypeId>SpawnGroupDefinition</TypeId>
+        <SubtypeId>(SYND) [Type:SS:HQ,Cost:1000000] HQ</SubtypeId>
+      </Id>
+      <Icon>Textures\GUI\Icons\Fake.dds</Icon>
+      <BeaconText>SYND HQ - Keep Out</BeaconText>
+      <IsPirate>true</IsPirate>
+      <IsEncounter>false</IsEncounter>
+      <Speed>0.0</Speed>
+      <Frequency>100</Frequency>
+      <Prefabs>
+        <Prefab SubtypeId="FSTC SYND HQ">
+          <Position>
+            <X>0.0</X>
+            <Y>0.0</Y>
+            <Z>0.0</Z>
+          </Position>
+          <Speed>0</Speed>
+        </Prefab>
+      </Prefabs>
+    </SpawnGroup>
+    <SpawnGroup>
+      <Id>
+        <TypeId>SpawnGroupDefinition</TypeId>
+        <SubtypeId>(XGTC) [Type:SS:HQ,Cost:1000000] HQ</SubtypeId>
+      </Id>
+      <Icon>Textures\GUI\Icons\Fake.dds</Icon>
+      <BeaconText>XGTC HQ - Keep Out</BeaconText>
+      <IsPirate>true</IsPirate>
+      <IsEncounter>false</IsEncounter>
+      <Speed>0.0</Speed>
+      <Frequency>100</Frequency>
+      <Prefabs>
+        <Prefab SubtypeId="FSTC XGTC HQ">
           <Position>
             <X>0.0</X>
             <Y>0.0</Y>

@@ -12,6 +12,7 @@ namespace FSTC {
 
     private static readonly long FACTION_REFRESH_TIMER = Util.TickSeconds(1); // 1 sec
     private static readonly long REPUTATION_REFRESH_TIMER = Util.TickMinutes(1); // 1 sec
+
     /**
      * Empire classification.
      * Determines how this empire reacts diplomatically to other empires.
@@ -31,42 +32,29 @@ namespace FSTC {
       PLAYER = 5
     };
 
+    /**
+     * Inject refresh events for diplomacy.
+     */
     public static void Initialize() {
-      //foreach (EmpireData empireA in GlobalData.world.empires) {
-        //InitFactionWars(empireA);
-      //}
       EventManager.AddEvent(GlobalData.world.currentTick + FACTION_REFRESH_TIMER, RefreshPlayerFactions);
       EventManager.AddEvent(GlobalData.world.currentTick + REPUTATION_REFRESH_TIMER, RefreshReputation);
     }
 
-    //private static void InitFactionWars(EmpireData empireA) {
-      //foreach (EmpireData empireB in GlobalData.world.empires) {
-        //if (empireA == empireB) {
-          //continue;
-        //}
-        //EmpireStanding standings = FindStandings(empireA, empireB);
-        //if (standings == null) {
-          //continue;
-        //}
-        //if (standings.atWar) {
-          //TryDeclareWar(empireA, empireB);
-        //} else {
-          //TryDeclarePeace(empireA, empireB);
-        //}
-      //}
-    //}
-
+    /**
+     * Refreshes the empire list to reflect the player factions.
+     */
     public static void RefreshPlayerFactions(object unused) {
       List<EmpireData> newEmpires = new List<EmpireData>();
       foreach (IMyFaction faction in MyAPIGateway.Session.Factions.Factions.Values) {
         if (faction.Tag.Length > 3 || GlobalData.world.empires.Find(e => e.empireTag == faction.Tag) != null) {
           continue;
         }
-        EmpireData playerEmpire = new EmpireData();
-        playerEmpire.empireTag = faction.Tag;
-        playerEmpire.empireType = (int) Diplomacy.EmpireType.PLAYER;
-        playerEmpire.bounds = new BoundingBoxD(new Vector3D(-0.0, -0.0, -0.0), new Vector3D(0, 0, 0));
-        playerEmpire.m_faction = faction;
+        EmpireData playerEmpire = new EmpireData {
+          empireTag = faction.Tag,
+          empireType = (int)Diplomacy.EmpireType.PLAYER,
+          bounds = new BoundingBoxD(new Vector3D(-0.0, -0.0, -0.0), new Vector3D(0, 0, 0)),
+          m_faction = faction
+        };
         newEmpires.Add(playerEmpire);
         Util.Log("Adding Diplomacy for player faction: " + faction.Tag);
       }
@@ -77,6 +65,9 @@ namespace FSTC {
       EventManager.AddEvent(GlobalData.world.currentTick + FACTION_REFRESH_TIMER, RefreshPlayerFactions);
     }
 
+    /**
+     * Refresh reputation
+     */
     public static void RefreshReputation(object unused) {
       foreach (EmpireData empireA in GlobalData.world.empires) {
         if ((EmpireType) empireA.empireType == EmpireType.PLAYER) {
@@ -152,7 +143,7 @@ namespace FSTC {
     /**
      * Determine based on empire A's type, how it default feels about empire B.
      */
-    public static EmpireStanding GetDefaultStanding(EmpireData empireA, EmpireData empireB) {
+    private static EmpireStanding GetDefaultStanding(EmpireData empireA, EmpireData empireB) {
       Util.Log("Generating default standing for " + empireA.empireTag + " and " + empireB.empireTag);
       EmpireStanding standing = new EmpireStanding();
       standing.inStateTill = long.MaxValue;
@@ -175,7 +166,7 @@ namespace FSTC {
       return standing;
     }
 
-    public static void TryDeclareWar(EmpireData empireA, EmpireData empireB) {
+    private static void TryDeclareWar(EmpireData empireA, EmpireData empireB) {
       if (empireA.m_faction == null || empireB.m_faction == null) {
         return;
       }
@@ -189,7 +180,7 @@ namespace FSTC {
       MyAPIGateway.Session.Factions.DeclareWar(empireA.m_faction.FactionId, empireB.m_faction.FactionId);
     }
 
-    public static void TryDeclarePeace(EmpireData empireA, EmpireData empireB) {
+    private static void TryDeclarePeace(EmpireData empireA, EmpireData empireB) {
       if (empireA.m_faction == null || empireB.m_faction == null) {
         return;
       }
