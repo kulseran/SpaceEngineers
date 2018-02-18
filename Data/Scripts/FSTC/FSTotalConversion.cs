@@ -1,7 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
+using Sandbox.Definitions;
 using Sandbox.ModAPI;
 using VRage.Game.Components;
+using VRage.Game.ModAPI;
+using VRage.ModAPI;
 using static FSTC.FSTCData;
 
 namespace FSTC {
@@ -24,6 +28,9 @@ namespace FSTC {
      *
      */
     public override void LoadData() {
+      MyDefinitionManager.Static.EnvironmentDefinition.SmallShipMaxSpeed = 200f;
+      MyDefinitionManager.Static.EnvironmentDefinition.LargeShipMaxSpeed = 150f;
+
       if (!MyAPIGateway.Multiplayer.IsServer) {
         return;
       }
@@ -75,6 +82,36 @@ namespace FSTC {
     public override void UpdateBeforeSimulation() {
       GlobalData.NextTick();
       EventManager.TriggerEvents(GlobalData.world.currentTick);
+      MyAPIGateway.Session.DamageSystem.RegisterBeforeDamageHandler(0, GenericDamageHandler);
+      MyAPIGateway.Session.DamageSystem.RegisterDestroyHandler(0, GenericDamageHandler);
+    }
+
+    private void GenericDamageHandler(object target, ref MyDamageInformation info) {
+      GenericDamageHandler(target, info);
+    }
+
+    public void GenericDamageHandler(object target, MyDamageInformation info) {
+      if (target == null || !(target is IMySlimBlock)) {
+        return;
+      }
+      IMySlimBlock block = target as IMySlimBlock;
+      IMyCubeGrid grid = block.CubeGrid;
+      long gridId = grid.GetTopMostParent().EntityId;
+      IMyFaction damageeFaction = grid.GetOwningFaction();
+
+      IMyPlayer damagerPlayer;
+      IMyFaction damagerFaction;
+      IMyCubeGrid damagerShip;
+      if (damageeFaction != null
+          && info.GetSource(out damagerPlayer, out damagerFaction, out damagerShip)) {
+
+        foreach (EmpireManager empire in m_empireManagers) {
+          if (empire.GetData().empireTag == damageeFaction.Tag) {
+            empire.TakeStandingsHit(damagerFaction.GetEmpire());
+            break;
+          }
+        }
+      }
     }
 
     /**
@@ -91,6 +128,7 @@ namespace FSTC {
 
       Util.Notify("Welcome to FSTC.");
     }
+
   }
 
 }  // namespace FSTC

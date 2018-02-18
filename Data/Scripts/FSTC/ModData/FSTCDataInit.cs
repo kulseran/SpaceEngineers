@@ -1,4 +1,5 @@
 using VRageMath;
+using static FSTC.FSTCData;
 
 namespace FSTC {
 
@@ -27,7 +28,7 @@ namespace FSTC {
       FSTCData.EmpireData ret = new FSTCData.EmpireData {
         empireTag = "SPRT",
         empireType = (int)Diplomacy.EmpireType.TRUE_HOSTILE,
-        bounds = new BoundingBoxD(new Vector3D(-9000.0, -10000.0, -10000.0), new Vector3D(10000, 10000, 10000))
+        ownedSectors = { new SectorId(0,1,0) }
       };
       return ret;
     }
@@ -36,7 +37,7 @@ namespace FSTC {
       FSTCData.EmpireData ret = new FSTCData.EmpireData {
         empireTag = "SHVN",
         empireType = (int)Diplomacy.EmpireType.TRUE_HOSTILE,
-        bounds = new BoundingBoxD(new Vector3D(-10000.0, -9000.0, -10000.0), new Vector3D(10000, 10000, 10000))
+        ownedSectors = { new SectorId(0,-1,0) }
       };
       return ret;
     }
@@ -45,7 +46,7 @@ namespace FSTC {
       FSTCData.EmpireData ret = new FSTCData.EmpireData {
         empireTag = "SYND",
         empireType = (int)Diplomacy.EmpireType.HOSTILE,
-        bounds = new BoundingBoxD(new Vector3D(-10000.0, -10000.0, -10000.0), new Vector3D(9000, 10000, 10000))
+        ownedSectors = { new SectorId(0,0,1) }
       };
       return ret;
     }
@@ -54,7 +55,7 @@ namespace FSTC {
       FSTCData.EmpireData ret = new FSTCData.EmpireData {
         empireTag = "EIEF",
         empireType = (int)Diplomacy.EmpireType.NEUTRAL,
-        bounds = new BoundingBoxD(new Vector3D(-10000.0, -10000.0, -10000.0), new Vector3D(10000, 9000, 10000))
+        ownedSectors = { new SectorId(0,0,-1) }
       };
       return ret;
     }
@@ -63,7 +64,7 @@ namespace FSTC {
       FSTCData.EmpireData ret = new FSTCData.EmpireData {
         empireTag = "IFTA",
         empireType = (int)Diplomacy.EmpireType.NEUTRAL,
-        bounds = new BoundingBoxD(new Vector3D(-10000.0, -10000.0, -10000.0), new Vector3D(10000, 9500, 9500))
+        ownedSectors = { new SectorId(-1,0,0) }
       };
       return ret;
     }
@@ -72,7 +73,7 @@ namespace FSTC {
       FSTCData.EmpireData ret = new FSTCData.EmpireData {
         empireTag = "XGTC",
         empireType = (int)Diplomacy.EmpireType.NEUTRAL,
-        bounds = new BoundingBoxD(new Vector3D(-10000.0, -9000.0, -10000.0), new Vector3D(10000, 10000, 9000))
+        ownedSectors = { new SectorId(1,0,0) }
       };
       return ret;
     }
@@ -81,7 +82,7 @@ namespace FSTC {
       FSTCData.EmpireData ret = new FSTCData.EmpireData {
         empireTag = "UEFA",
         empireType = (int)Diplomacy.EmpireType.POLICE,
-        bounds = new BoundingBoxD(new Vector3D(-10000.0, -10000.0, -9500.0), new Vector3D(10000, 9500, 10000))
+        ownedSectors = { new SectorId(1,0,1) }
       };
       return ret;
     }

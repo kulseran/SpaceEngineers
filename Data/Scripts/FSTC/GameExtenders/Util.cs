@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Sandbox.Game;
 using VRage.Utils;
 
@@ -23,27 +24,30 @@ namespace FSTC {
       MyVisualScriptLogicProvider.ShowNotificationToAll("FSTC: " + argument, 10000, "White");
     }
 
-    /**
-     * Convert seconds to ticks.
-     */
-    public static long TickSeconds(long v) {
-      return v * 60;
+    public static void Shuffle<T>(this IList<T> list) {
+      for (var i = 0; i < list.Count; i++) {
+        list.Swap(i, rand.Next(i, list.Count));
+      }
     }
 
-    /**
-     * Convert minutes to ticks.
-     */
-    public static long TickMinutes(long v) {
-      return TickSeconds(60) * v;
+    public static void Swap<T>(this IList<T> list, int i, int j) {
+      var temp = list[i];
+      list[i] = list[j];
+      list[j] = temp;
     }
 
     /**
      * Logging utlility
      */
+    static string lastLog = null;
     public static void Log(string argument) {
       if (!LOGGING_ENABLED) {
         return;
       }
+      if (lastLog != null && lastLog.Equals(argument)) {
+        return;
+      }
+      lastLog = argument;
       MyLog.Default.WriteLine("FSTC: " + argument);
     }
 
@@ -66,5 +70,6 @@ namespace FSTC {
       }
       MyLog.Default.WriteLineAndConsole("FSTC: (error) " + argument);
     }
+
   }
 }  // namespace FSTC

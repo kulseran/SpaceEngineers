@@ -8,8 +8,9 @@ using static FSTC.FSTCData.EmpireData;
 namespace FSTC {
   public static class Diplomacy {
 
-    private static readonly long FACTION_REFRESH_TIMER = Util.TickSeconds(1); // 1 sec
-    private static readonly long REPUTATION_REFRESH_TIMER = Util.TickMinutes(1); // 1 sec
+    private static readonly long FACTION_REFRESH_TIMER = Tick.Seconds(1);
+    private static readonly long REPUTATION_REFRESH_TIMER = Tick.Minutes(1);
+    private static readonly long AGRESSION_TIMER_TICKS = Tick.Minutes(5);
 
     /**
      * Empire classification.
@@ -41,7 +42,7 @@ namespace FSTC {
     /**
      * Refreshes the empire list to reflect the player factions.
      */
-    public static void RefreshPlayerFactions(object unused) {
+    public static void RefreshPlayerFactions() {
       List<EmpireData> newEmpires = new List<EmpireData>();
       foreach (IMyFaction faction in MyAPIGateway.Session.Factions.Factions.Values) {
         if (faction.Tag.Length > 3 || GlobalData.world.empires.Find(e => e.empireTag == faction.Tag) != null) {
@@ -50,7 +51,7 @@ namespace FSTC {
         EmpireData playerEmpire = new EmpireData {
           empireTag = faction.Tag,
           empireType = (int)Diplomacy.EmpireType.PLAYER,
-          bounds = new BoundingBoxD(new Vector3D(-0.0, -0.0, -0.0), new Vector3D(0, 0, 0)),
+          ownedSectors = { new SectorId(0, 0, 0) },
           m_faction = faction
         };
         newEmpires.Add(playerEmpire);
@@ -58,7 +59,7 @@ namespace FSTC {
       }
       if (newEmpires.Count > 0) {
         GlobalData.world.empires.AddRange(newEmpires);
-        RefreshReputation(null);
+        RefreshReputation();
       }
       EventManager.AddEvent(GlobalData.world.currentTick + FACTION_REFRESH_TIMER, RefreshPlayerFactions);
     }
@@ -66,9 +67,9 @@ namespace FSTC {
     /**
      * Refresh reputation
      */
-    public static void RefreshReputation(object unused) {
+    public static void RefreshReputation() {
       foreach (EmpireData empireA in GlobalData.world.empires) {
-        if ((EmpireType) empireA.empireType == EmpireType.PLAYER) {
+        if ((EmpireType)empireA.empireType == EmpireType.PLAYER) {
           continue;
         }
         foreach (EmpireData empireB in GlobalData.world.empires) {
@@ -113,6 +114,14 @@ namespace FSTC {
           if (!standing.atWar && MyAPIGateway.Session.Factions.IsPeaceRequestStatePending(empireA.m_faction.FactionId, empireB.m_faction.FactionId)) {
             MyAPIGateway.Session.Factions.AcceptPeace(empireA.m_faction.FactionId, empireB.m_faction.FactionId);
           }
+          // If we're the police, force accept the peace offer for player factions
+          if (!standing.atWar
+              && MyAPIGateway.Session.Factions.IsPeaceRequestStateSent(empireA.m_faction.FactionId, empireB.m_faction.FactionId)
+              && (EmpireType)empireB.empireType == EmpireType.PLAYER
+              && (EmpireType)empireA.empireType == EmpireType.POLICE) {
+            MyAPIGateway.Session.Factions.AcceptPeace(empireA.m_faction.FactionId, empireB.m_faction.FactionId);
+            MyAPIGateway.Session.Factions.AcceptPeace(empireB.m_faction.FactionId, empireA.m_faction.FactionId);
+          }
 
           if (!standing.atWar) {
             TryDeclarePeace(empireA, empireB);
@@ -136,6 +145,46 @@ namespace FSTC {
         }
       }
       return null;
+    }
+
+    /**
+     * 
+     */
+    public static void DeclareWar(EmpireData empireA, EmpireData empireB) {
+      EmpireStanding standings = FindStandings(empireA, empireB);
+      if (standings == null) {
+        return;
+      }
+      bool previouslyAtWar = standings.atWar;
+      standings.atWar = true;
+      if (!WarIsDefault(empireA)) {
+        standings.inStateTill = GlobalData.world.currentTick + AGRESSION_TIMER_TICKS;
+      }
+      if (!previouslyAtWar) {
+        TryDeclareWar(empireA, empireB);
+      }
+    }
+
+    /**
+     * 
+     */
+    public static void CallPolice(EmpireData callerEmpire, EmpireData targetEmpire) {
+      if (callerEmpire == null || targetEmpire == null) {
+        return;
+      }
+      if (WarIsDefault(callerEmpire)) {
+        return;
+      }
+      EmpireStanding standings = FindStandings(callerEmpire, targetEmpire);
+      if (standings == null || standings.atWar) {
+        return;
+      }
+      foreach (EmpireData empireA in GlobalData.world.empires) {
+        if ((EmpireType)empireA.empireType != EmpireType.POLICE) {
+          continue;
+        }
+        DeclareWar(empireA, targetEmpire);
+      }
     }
 
     /**
@@ -206,19 +255,6 @@ namespace FSTC {
     private static bool WarIsDefault(EmpireData empire) {
       return (EmpireType)empire.empireType == EmpireType.TRUE_HOSTILE
           || (EmpireType)empire.empireType == EmpireType.HOSTILE;
-    }
-
-    private static bool WillAcceptPeace(EmpireData empire) {
-      return (EmpireType)empire.empireType != EmpireType.TRUE_HOSTILE;
-    }
-
-    private static bool WarIsTransient(EmpireData empire) {
-      return (EmpireType)empire.empireType == EmpireType.NEUTRAL ||
-             (EmpireType)empire.empireType == EmpireType.POLICE;
-    }
-
-    private static bool PeaceIsTransient(EmpireData empire) {
-      return (EmpireType)empire.empireType == EmpireType.HOSTILE;
     }
   }
 }
