@@ -51,7 +51,7 @@ namespace FSTC {
         EmpireData playerEmpire = new EmpireData {
           empireTag = faction.Tag,
           empireType = (int)Diplomacy.EmpireType.PLAYER,
-          ownedSectors = { new SectorId(0, 0, 0) },
+          ownedSectors = { new SectorId() { x = 0, y = 0, z = 0 } },
           m_faction = faction
         };
         newEmpires.Add(playerEmpire);
@@ -148,7 +148,7 @@ namespace FSTC {
     }
 
     /**
-     * 
+     * Declares a temporary war between two factions.
      */
     public static void DeclareWar(EmpireData empireA, EmpireData empireB) {
       EmpireStanding standings = FindStandings(empireA, empireB);
@@ -166,17 +166,14 @@ namespace FSTC {
     }
 
     /**
-     * 
+     * If a peaceful empire 'calls the police', the police faction will temporarially declare
+     * war against the attacking faction.
      */
     public static void CallPolice(EmpireData callerEmpire, EmpireData targetEmpire) {
       if (callerEmpire == null || targetEmpire == null) {
         return;
       }
       if (WarIsDefault(callerEmpire)) {
-        return;
-      }
-      EmpireStanding standings = FindStandings(callerEmpire, targetEmpire);
-      if (standings == null || standings.atWar) {
         return;
       }
       foreach (EmpireData empireA in GlobalData.world.empires) {
@@ -213,6 +210,9 @@ namespace FSTC {
       return standing;
     }
 
+    /**
+     * Declares a faction ware between two factions, and cancels any outstanding peace negotiations.
+     */
     private static void TryDeclareWar(EmpireData empireA, EmpireData empireB) {
       if (!MyAPIGateway.Multiplayer.IsServer) {
         return;
@@ -230,6 +230,9 @@ namespace FSTC {
       MyAPIGateway.Session.Factions.DeclareWar(empireA.m_faction.FactionId, empireB.m_faction.FactionId);
     }
 
+    /**
+     * Sends a peace negotiation between two factions, with faction A as the initiator.
+     */
     private static void TryDeclarePeace(EmpireData empireA, EmpireData empireB) {
       if (!MyAPIGateway.Multiplayer.IsServer) {
         return;
@@ -248,13 +251,24 @@ namespace FSTC {
       MyAPIGateway.Session.Factions.SendPeaceRequest(empireA.m_faction.FactionId, empireB.m_faction.FactionId);
     }
 
-    private static bool PeaceIsDefault(EmpireData empire) {
-      return !WarIsDefault(empire);
-    }
-
+    /**
+     * Return if this empire type prefers to be at war.
+     * A empire diplomacy timer indicates that this faction is temporarially at peace, and upon
+     * expiration, the faction will attempt to go to war again.
+     */
     private static bool WarIsDefault(EmpireData empire) {
       return (EmpireType)empire.empireType == EmpireType.TRUE_HOSTILE
           || (EmpireType)empire.empireType == EmpireType.HOSTILE;
     }
+
+    /**
+     * Return if this empire type prefers to be at peace.
+     * A empire diplomacy timer indicates that this faction is temporarially at war, and upon
+     * expiration, the faction will attempt to negotiate peace.
+     */
+    private static bool PeaceIsDefault(EmpireData empire) {
+      return !WarIsDefault(empire);
+    }
+
   }
 }

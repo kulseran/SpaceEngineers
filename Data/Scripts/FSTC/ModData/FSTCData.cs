@@ -21,12 +21,6 @@ namespace FSTC {
       public long x;
       public long y;
       public long z;
-
-      public SectorId(long x, long y, long z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-      }
     };
 
     [XmlType("FSTCEmpireData")]

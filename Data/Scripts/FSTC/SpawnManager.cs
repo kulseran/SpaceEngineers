@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Sandbox.Definitions;
+using Sandbox.Game.Entities;
 using Sandbox.ModAPI;
 using VRage.Game;
 using VRage.Game.ModAPI;
@@ -26,6 +27,7 @@ namespace FSTC {
     private static readonly double SPAWNER_SEARCH_RADIUS = 10.0;
 
     private static readonly float CARGOSHIP_SPEED = 30.0f;
+    private static readonly float CARGOSHIP_SPAWN_DIST = 8000f;
 
     /**
      *
@@ -163,9 +165,9 @@ namespace FSTC {
     private List<GroupInfo> m_spawnGroups = new List<GroupInfo>();
 
     private EmpireData m_empireData;
-    private long m_spawnTickIntervalFirst;
-    private long m_spawnTickIntervalMin;
-    private long m_spawnTickIntervalMax;
+    private int m_spawnTickIntervalFirst;
+    private int m_spawnTickIntervalMin;
+    private int m_spawnTickIntervalMax;
 
     /**
      * Init the spawner.
@@ -174,6 +176,7 @@ namespace FSTC {
       m_empireData = empireData;
       GetAllSpawnGroups();
       ReRegisterDespawns();
+      RegisterCargoShip();
     }
 
     /**
@@ -373,15 +376,15 @@ namespace FSTC {
       TimeSpan eventFirst = (TimeSpan)spawnShipGlobalEvent.FirstActivationTime;
       TimeSpan eventMin = (TimeSpan)spawnShipGlobalEvent.MinActivationTime;
       TimeSpan eventMax = (TimeSpan)spawnShipGlobalEvent.MaxActivationTime;
-      m_spawnTickIntervalFirst = Tick.Seconds((Int32)eventFirst.TotalSeconds);
-      m_spawnTickIntervalMin = Tick.Seconds((Int32)eventMin.TotalSeconds);
-      m_spawnTickIntervalMax = Tick.Seconds((Int32)eventMax.TotalSeconds);
+      m_spawnTickIntervalFirst = (int)Tick.Seconds((int)eventFirst.TotalSeconds);
+      m_spawnTickIntervalMin = (int)Tick.Seconds((int)eventMin.TotalSeconds);
+      m_spawnTickIntervalMax = (int)Tick.Seconds((int)eventMax.TotalSeconds);
     }
 
     /**
      * Init the spawn group list to contain all the spawner groups which contain the tag
-     *     (FACTION)
-     * in their name.
+     * `(FACTION)` in their name. Parse out anything between the first `[]` looking for the 
+     * required tag `TYPE:` and optional tag `COST:`
      */
     private void GetAllSpawnGroups() {
       var allSpawnGroups = MyDefinitionManager.Static.GetSpawnGroupDefinitions();
@@ -430,12 +433,48 @@ namespace FSTC {
      * This should only be run at load time.
      */
     private void ReRegisterDespawns() {
+      m_empireData.civilianFleet.RemoveAll(
+          s => MyAPIGateway.Entities.GetEntityById(s.entityId) == null);
+      m_empireData.militaryFleet.RemoveAll(
+          s => MyAPIGateway.Entities.GetEntityById(s.entityId) == null);
+      // m_empireData.encounters.RemoveAll(
+      //    s => MyAPIGateway.Entities.GetEntityById(s.entityId) == null);
+
       foreach (SpawnedShip shipInfo in m_empireData.civilianFleet) {
         EventManager.AddEvent(shipInfo.despawnTick, () => DespawnDrone(shipInfo.entityId));
       }
       foreach (SpawnedShip shipInfo in m_empireData.militaryFleet) {
         EventManager.AddEvent(shipInfo.despawnTick, () => DespawnDrone(shipInfo.entityId));
       }
+    }
+
+    private void RegisterCargoShip() {
+      long targetTick = Math.Max(
+          m_spawnTickIntervalFirst,
+          GlobalData.world.currentTick + Util.rand.Next(m_spawnTickIntervalMin, m_spawnTickIntervalMax));
+      EventManager.AddEvent(targetTick, SpawnCargoShip);
+    }
+
+    private void SpawnCargoShip() {
+      long targetTick = GlobalData.world.currentTick
+          + Util.rand.Next(m_spawnTickIntervalMin, m_spawnTickIntervalMax);
+      EventManager.AddEvent(targetTick, SpawnCargoShip);
+
+      if (m_empireData.civilianFleet.Count >= 2) {
+        return;
+      }
+      GroupInfo group = GetRandomSpawnGroup(SpawnerClass.CIVILIAN, m_empireData.credits);
+      if (group == null) {
+        return;
+      }
+      IMyPlayer randomPlayer = GetRandomPlayer();
+      if (randomPlayer == null) {
+        return;
+      }
+      Vector3D randLocation = MathExtender.RandomPointOnSphere(
+          randomPlayer.GetPosition(),
+          CARGOSHIP_SPAWN_DIST);
+      SpawnForGroup(group, EncounterType.TransientCargoship, randLocation);
     }
   }
 

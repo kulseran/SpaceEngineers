@@ -1,3 +1,4 @@
+using System;
 using VRageMath;
 
 namespace FSTC {
@@ -5,7 +6,7 @@ namespace FSTC {
   /**
    * Helper functions for math primitives.
    */
-  public static class MathExtensions {
+  public static class MathExtender {
 
     /**
      * Convert a Vector3D into a GPS coordinate compatible with the clipboard.
@@ -19,6 +20,17 @@ namespace FSTC {
      */
     public static double DistanceTo(this Vector3D vecStart, Vector3D vecEnd) {
       return (vecEnd - vecStart).Length();
+    }
+
+    /**
+     * Generate a random point on a sphere.
+     */
+    public static Vector3D RandomPointOnSphere(Vector3D center, float radius) {
+      double z = Util.rand.NextDouble();
+      double t = Util.rand.NextDouble();
+      double x = Math.Sqrt(1 - z*z) * Math.Cos(t);
+      double y = Math.Sqrt(1 - z*z) * Math.Sin(t);
+      return new Vector3D(x, y, z) * radius + center;
     }
 
   };

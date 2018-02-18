@@ -28,7 +28,7 @@ namespace FSTC {
       FSTCData.EmpireData ret = new FSTCData.EmpireData {
         empireTag = "SPRT",
         empireType = (int)Diplomacy.EmpireType.TRUE_HOSTILE,
-        ownedSectors = { new SectorId(0,1,0) }
+        ownedSectors = { new SectorId() { x = 0, y = 1, z = 0 } }
       };
       return ret;
     }
@@ -37,7 +37,7 @@ namespace FSTC {
       FSTCData.EmpireData ret = new FSTCData.EmpireData {
         empireTag = "SHVN",
         empireType = (int)Diplomacy.EmpireType.TRUE_HOSTILE,
-        ownedSectors = { new SectorId(0,-1,0) }
+        ownedSectors = { new SectorId() { x = 0, y = -1, z = 0 } }
       };
       return ret;
     }
@@ -46,7 +46,7 @@ namespace FSTC {
       FSTCData.EmpireData ret = new FSTCData.EmpireData {
         empireTag = "SYND",
         empireType = (int)Diplomacy.EmpireType.HOSTILE,
-        ownedSectors = { new SectorId(0,0,1) }
+        ownedSectors = { new SectorId() { x = 0, y = 0, z = 1 } }
       };
       return ret;
     }
@@ -55,7 +55,7 @@ namespace FSTC {
       FSTCData.EmpireData ret = new FSTCData.EmpireData {
         empireTag = "EIEF",
         empireType = (int)Diplomacy.EmpireType.NEUTRAL,
-        ownedSectors = { new SectorId(0,0,-1) }
+        ownedSectors = { new SectorId() { x = 0, y = 0, z = -1 } }
       };
       return ret;
     }
@@ -64,7 +64,7 @@ namespace FSTC {
       FSTCData.EmpireData ret = new FSTCData.EmpireData {
         empireTag = "IFTA",
         empireType = (int)Diplomacy.EmpireType.NEUTRAL,
-        ownedSectors = { new SectorId(-1,0,0) }
+        ownedSectors = { new SectorId() { x = -1, y = 0, z = 0 } }
       };
       return ret;
     }
@@ -73,7 +73,7 @@ namespace FSTC {
       FSTCData.EmpireData ret = new FSTCData.EmpireData {
         empireTag = "XGTC",
         empireType = (int)Diplomacy.EmpireType.NEUTRAL,
-        ownedSectors = { new SectorId(1,0,0) }
+        ownedSectors = { new SectorId() { x = 1, y = 0, z = 0 } }
       };
       return ret;
     }
@@ -82,7 +82,7 @@ namespace FSTC {
       FSTCData.EmpireData ret = new FSTCData.EmpireData {
         empireTag = "UEFA",
         empireType = (int)Diplomacy.EmpireType.POLICE,
-        ownedSectors = { new SectorId(1,0,1) }
+        ownedSectors = { new SectorId() { x = 1, y = 0, z = 1 } }
       };
       return ret;
     }

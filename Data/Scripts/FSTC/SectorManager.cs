@@ -31,35 +31,35 @@ namespace FSTC {
       List<SectorId> checkSectors = new List<SectorId>();
       List<SectorId> freeSectors = new List<SectorId>();
       List<SectorId> occupiedSectors = new List<SectorId>();
-      checkSectors.Add(new SectorId(origin.x + 1, origin.y + 1, origin.z + 1));
-      checkSectors.Add(new SectorId(origin.x + 0, origin.y + 1, origin.z + 1));
-      checkSectors.Add(new SectorId(origin.x - 1, origin.y + 1, origin.z + 1));
-      checkSectors.Add(new SectorId(origin.x + 1, origin.y + 0, origin.z + 1));
-      checkSectors.Add(new SectorId(origin.x + 0, origin.y + 0, origin.z + 1));
-      checkSectors.Add(new SectorId(origin.x - 1, origin.y + 0, origin.z + 1));
-      checkSectors.Add(new SectorId(origin.x + 1, origin.y - 1, origin.z + 1));
-      checkSectors.Add(new SectorId(origin.x + 0, origin.y - 1, origin.z + 1));
-      checkSectors.Add(new SectorId(origin.x - 1, origin.y - 1, origin.z + 1));
+      checkSectors.Add(new SectorId() { x = origin.x + 1, y =  origin.y + 1, z =  origin.z + 1 });
+      checkSectors.Add(new SectorId() { x = origin.x + 0, y =  origin.y + 1, z =  origin.z + 1 });
+      checkSectors.Add(new SectorId() { x = origin.x - 1, y =  origin.y + 1, z =  origin.z + 1 });
+      checkSectors.Add(new SectorId() { x = origin.x + 1, y =  origin.y + 0, z =  origin.z + 1 });
+      checkSectors.Add(new SectorId() { x = origin.x + 0, y =  origin.y + 0, z =  origin.z + 1 });
+      checkSectors.Add(new SectorId() { x = origin.x - 1, y =  origin.y + 0, z =  origin.z + 1 });
+      checkSectors.Add(new SectorId() { x = origin.x + 1, y =  origin.y - 1, z =  origin.z + 1 });
+      checkSectors.Add(new SectorId() { x = origin.x + 0, y =  origin.y - 1, z =  origin.z + 1 });
+      checkSectors.Add(new SectorId() { x = origin.x - 1, y =  origin.y - 1, z =  origin.z + 1 });
 
-      checkSectors.Add(new SectorId(origin.x + 1, origin.y + 1, origin.z + 0));
-      checkSectors.Add(new SectorId(origin.x + 0, origin.y + 1, origin.z + 0));
-      checkSectors.Add(new SectorId(origin.x - 1, origin.y + 1, origin.z + 0));
-      checkSectors.Add(new SectorId(origin.x + 1, origin.y + 0, origin.z + 0));
+      checkSectors.Add(new SectorId() { x = origin.x + 1, y =  origin.y + 1, z =  origin.z + 0 });
+      checkSectors.Add(new SectorId() { x = origin.x + 0, y =  origin.y + 1, z =  origin.z + 0 });
+      checkSectors.Add(new SectorId() { x = origin.x - 1, y =  origin.y + 1, z =  origin.z + 0 });
+      checkSectors.Add(new SectorId() { x = origin.x + 1, y =  origin.y + 0, z =  origin.z + 0 });
 
-      checkSectors.Add(new SectorId(origin.x - 1, origin.y + 0, origin.z + 0));
-      checkSectors.Add(new SectorId(origin.x + 1, origin.y - 1, origin.z + 0));
-      checkSectors.Add(new SectorId(origin.x + 0, origin.y - 1, origin.z + 0));
-      checkSectors.Add(new SectorId(origin.x - 1, origin.y - 1, origin.z + 0));
+      checkSectors.Add(new SectorId() { x = origin.x - 1, y =  origin.y + 0, z =  origin.z + 0 });
+      checkSectors.Add(new SectorId() { x = origin.x + 1, y =  origin.y - 1, z =  origin.z + 0 });
+      checkSectors.Add(new SectorId() { x = origin.x + 0, y =  origin.y - 1, z =  origin.z + 0 });
+      checkSectors.Add(new SectorId() { x = origin.x - 1, y =  origin.y - 1, z =  origin.z + 0 });
 
-      checkSectors.Add(new SectorId(origin.x + 1, origin.y + 1, origin.z - 1));
-      checkSectors.Add(new SectorId(origin.x + 0, origin.y + 1, origin.z - 1));
-      checkSectors.Add(new SectorId(origin.x - 1, origin.y + 1, origin.z - 1));
-      checkSectors.Add(new SectorId(origin.x + 1, origin.y + 0, origin.z - 1));
-      checkSectors.Add(new SectorId(origin.x + 0, origin.y + 0, origin.z - 1));
-      checkSectors.Add(new SectorId(origin.x - 1, origin.y + 0, origin.z - 1));
-      checkSectors.Add(new SectorId(origin.x + 1, origin.y - 1, origin.z - 1));
-      checkSectors.Add(new SectorId(origin.x + 0, origin.y - 1, origin.z - 1));
-      checkSectors.Add(new SectorId(origin.x - 1, origin.y - 1, origin.z - 1));
+      checkSectors.Add(new SectorId() { x = origin.x + 1, y =  origin.y + 1, z =  origin.z - 1 });
+      checkSectors.Add(new SectorId() { x = origin.x + 0, y =  origin.y + 1, z =  origin.z - 1 });
+      checkSectors.Add(new SectorId() { x = origin.x - 1, y =  origin.y + 1, z =  origin.z - 1 });
+      checkSectors.Add(new SectorId() { x = origin.x + 1, y =  origin.y + 0, z =  origin.z - 1 });
+      checkSectors.Add(new SectorId() { x = origin.x + 0, y =  origin.y + 0, z =  origin.z - 1 });
+      checkSectors.Add(new SectorId() { x = origin.x - 1, y =  origin.y + 0, z =  origin.z - 1 });
+      checkSectors.Add(new SectorId() { x = origin.x + 1, y =  origin.y - 1, z =  origin.z - 1 });
+      checkSectors.Add(new SectorId() { x = origin.x + 0, y =  origin.y - 1, z =  origin.z - 1 });
+      checkSectors.Add(new SectorId() { x = origin.x - 1, y =  origin.y - 1, z =  origin.z - 1 });
 
       foreach (SectorId id in checkSectors) {
         if (m_ocupiedSectors.ContainsKey(id) && (checkedSectors == null || !checkedSectors.Contains(id))) {
@@ -119,10 +119,10 @@ namespace FSTC {
      */
     public static SectorId SectorFromPosition(Vector3D pos) {
       Vector3D sectorFloat = (pos + SECTOR_OFFSET) / SECTOR_SIZE;
-      return new SectorId(
-          (long) Math.Floor(sectorFloat.X),
-          (long) Math.Floor(sectorFloat.Y),
-          (long) Math.Floor(sectorFloat.Z));
+      return new SectorId() {
+          x = (long) Math.Floor(sectorFloat.X),
+          y = (long) Math.Floor(sectorFloat.Y),
+          z = (long) Math.Floor(sectorFloat.Z)};
     }
 
     /**
