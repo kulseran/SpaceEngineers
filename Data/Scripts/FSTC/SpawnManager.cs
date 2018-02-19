@@ -9,6 +9,7 @@ using VRage.Game.ModAPI;
 using VRage.ModAPI;
 using VRageMath;
 using static FSTC.FSTCData;
+using static FSTC.FSTCData.EmpireData;
 
 namespace FSTC {
 
@@ -27,7 +28,8 @@ namespace FSTC {
     private static readonly double SPAWNER_SEARCH_RADIUS = 10.0;
 
     private static readonly float CARGOSHIP_SPEED = 30.0f;
-    private static readonly float CARGOSHIP_SPAWN_DIST = 8000f;
+    private static readonly float CARGOSHIP_SPAWN_DIST = 10000f;
+    private static readonly float CARGOSHIP_CROSS_DIST = 5000f;
 
     /**
      *
@@ -165,9 +167,9 @@ namespace FSTC {
     private List<GroupInfo> m_spawnGroups = new List<GroupInfo>();
 
     private EmpireData m_empireData;
-    private int m_spawnTickIntervalFirst;
-    private int m_spawnTickIntervalMin;
-    private int m_spawnTickIntervalMax;
+    private int m_spawnTickIntervalFirst = 60;
+    private int m_spawnTickIntervalMin = 600;
+    private int m_spawnTickIntervalMax = 1800;
 
     /**
      * Init the spawner.
@@ -184,7 +186,7 @@ namespace FSTC {
      */
     public GroupInfo GetRandomSpawnGroup(SpawnerClass spawnClass, int maxCost) {
       List<GroupInfo> matchingGroups =
-          m_spawnGroups.FindAll(g => (g.m_spawnClass == spawnClass) && (g.m_cost < maxCost));
+          m_spawnGroups.FindAll(g => (g.m_spawnClass == spawnClass) && (g.m_cost <= maxCost));
       return GetRandomSpawnGroup(matchingGroups);
     }
 
@@ -193,7 +195,7 @@ namespace FSTC {
      */
     public GroupInfo GetRandomSpawnGroup(SpawnerType spawnType, int maxCost) {
       List<GroupInfo> matchingGroups =
-          m_spawnGroups.FindAll(g => (g.m_spawnType == spawnType) && (g.m_cost < maxCost));
+          m_spawnGroups.FindAll(g => (g.m_spawnType == spawnType) && (g.m_cost <= maxCost));
       return GetRandomSpawnGroup(matchingGroups);
     }
 
@@ -202,8 +204,9 @@ namespace FSTC {
      */
     public void SpawnForRegion(GroupInfo group, EncounterType encounterType, BoundingBoxD region) {
       Vector3D regionExtent = (region.Max - region.Min);
-      Vector3D randomSpawn = region.Min + (regionExtent * Util.rand.NextDouble());
-      SpawnForGroup(group, encounterType, randomSpawn);
+      Vector3D randomStart = region.Min + (regionExtent * Util.rand.NextDouble());
+      Vector3D randomEnd = region.Min + (regionExtent * Util.rand.NextDouble());
+      SpawnForGroup(group, encounterType, randomStart, randomEnd);
     }
 
     /**
@@ -243,7 +246,11 @@ namespace FSTC {
     /**
      * Spawn the ships in the given spawner group.
      */
-    private void SpawnForGroup(GroupInfo group, EncounterType encounterType, Vector3D spawnCenter) {
+    private void SpawnForGroup(
+        GroupInfo group,
+        EncounterType encounterType,
+        Vector3D spawnStart,
+        Vector3D spawnEnd) {
       if (group == null || group.m_spawnGroupDef == null) {
         return;
       }
@@ -259,23 +266,10 @@ namespace FSTC {
         MatrixD groupMat;
         // Vector3D prefabStartCoords = Vector3D.Transform((Vector3D)prefab.Position, cargoShipPathStartMatrix);
         // TODO: tranform sub-spawns correctly
-        Vector3D prefabSpawnPos = spawnCenter;
-        Vector3D prefabDeSpawnPos = spawnCenter + (lookDir * 1000.0);
+        Vector3D prefabSpawnPos = spawnStart;
+        Vector3D prefabDeSpawnPos = spawnEnd;
         SpawnPrefab(prefab, prefabSpawnPos, prefabDeSpawnPos, encounterType);
       }
-    }
-
-    /**
-     * Get a random player to spawn off of.
-     */
-    private IMyPlayer GetRandomPlayer() {
-      List<IMyPlayer> allPlayers = new List<IMyPlayer>();
-      MyAPIGateway.Players.GetPlayers(allPlayers);
-      if (allPlayers.Count() == 0) {
-        return null;
-      }
-      List<IMyPlayer> playerList = allPlayers.FindAll(p => p.IsBot == false);
-      return playerList[Util.rand.Next(playerList.Count())];
     }
 
     /**
@@ -286,20 +280,26 @@ namespace FSTC {
       Vector3D spawnFacing = Vector3D.Normalize(despawnCoords - spawnCoords);
       List<IMyCubeGrid> tempSpawningList = new List<IMyCubeGrid>();
 
+      var spawnOptions = SpawningOptions.SetNeutralOwner | SpawningOptions.RotateFirstCockpitTowardsDirection | SpawningOptions.SpawnRandomCargo;
+      if (encounterType == EncounterType.TransientCargoship) {
+        spawnOptions = spawnOptions | SpawningOptions.DisableDampeners;
+      }
+
+
       MyAPIGateway.PrefabManager.SpawnPrefab(
           resultList: tempSpawningList,
           prefabName: prefab.SubtypeId,
           position: spawnCoords,
           forward: spawnFacing,
           up: new Vector3D(0, 1, 0),
-          spawningOptions: SpawningOptions.SetNeutralOwner | SpawningOptions.RotateFirstCockpitTowardsDirection | SpawningOptions.SpawnRandomCargo,
+          spawningOptions: spawnOptions,
           beaconName: prefab.BeaconText,
           ownerId: m_empireData.m_faction.FounderId,
           updateSync: false,
-          callback: () => SpawnerCallback(encounterType, prefab, spawnCoords, m_empireData.m_faction));
+          callback: () => SpawnerCallback(encounterType, prefab, spawnCoords, despawnCoords, m_empireData.m_faction));
     }
 
-    public void SpawnerCallback(EncounterType encounterType, MySpawnGroupDefinition.SpawnGroupPrefab prefab, Vector3D spawnCoord, IMyFaction ownerFaction) {
+    public void SpawnerCallback(EncounterType encounterType, MySpawnGroupDefinition.SpawnGroupPrefab prefab, Vector3D spawnCoord, Vector3D despawnCoords, IMyFaction ownerFaction) {
       Util.Log("Searching for spawned Prefab...");
       IMyCubeGrid spawnedShip = null;
       double minDist = double.MaxValue;
@@ -322,28 +322,39 @@ namespace FSTC {
         return;
       }
       spawnedShip.ChangeGridOwnership(m_empireData.m_faction.FounderId, MyOwnershipShareModeEnum.None);
-      IMyGridTerminalSystem gts = MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(spawnedShip);
+      
+      IMyGridTerminalSystem gts = spawnedShip.GetTerminalSystem();
       List<IMyRemoteControl> blocks = new List<IMyRemoteControl>();
       gts.GetBlocksOfType(blocks);
       IMyRemoteControl firstRemote = blocks.Find(b => b.IsFunctional);
-      LaunchDrone(encounterType, firstRemote, spawnedShip);
+      LaunchDrone(encounterType, firstRemote, spawnedShip, despawnCoords);
     }
 
-    void LaunchDrone(EncounterType encounterType, IMyRemoteControl remote, IMyEntity entity) {
+    void LaunchDrone(EncounterType encounterType, IMyRemoteControl remote, IMyEntity entity, Vector3D despawnCoords) {
       if (remote != null && encounterType == EncounterType.TransientCargoship) {
         remote.ClearWaypoints();
         remote.FlightMode = Sandbox.ModAPI.Ingame.FlightMode.OneWay;
-        remote.AddWaypoint(new Vector3D(0, 0, 0), "DespawnTarget");
+        remote.AddWaypoint(despawnCoords, "DespawnTarget");
         remote.SetAutoPilotEnabled(true);
         remote.SpeedLimit = CARGOSHIP_SPEED;
+        Util.Notify("Autopilot set");
       }
 
       SpawnedShip ship = new SpawnedShip();
       ship.entityId = entity.EntityId;
-      m_empireData.encounters.Add(ship);
-      //EventManager.AddEvent(
-      //GlobalData.world.currentTick + Tick.Seconds(60),
-      //() => DespawnDrone(entity.EntityId));
+      if (encounterType == EncounterType.Static || encounterType == EncounterType.TransientEncounter) {
+        m_empireData.encounters.Add(ship);
+      } else if (encounterType == EncounterType.TransientCargoship) {
+        m_empireData.civilianFleet.Add(ship);
+      } else if (encounterType == EncounterType.TransientAttackship) {
+        m_empireData.militaryFleet.Add(ship);
+      }
+
+      if (encounterType == EncounterType.TransientAttackship || encounterType == EncounterType.TransientCargoship) {
+        EventManager.AddEvent(
+            GlobalData.world.currentTick + Tick.Seconds(60),
+            () => DespawnDrone(entity.EntityId));
+      }
       Util.Log("Drone Prepped!");
     }
 
@@ -452,29 +463,75 @@ namespace FSTC {
       long targetTick = Math.Max(
           m_spawnTickIntervalFirst,
           GlobalData.world.currentTick + Util.rand.Next(m_spawnTickIntervalMin, m_spawnTickIntervalMax));
-      EventManager.AddEvent(targetTick, SpawnCargoShip);
+      EventManager.AddEvent(targetTick, SpawnNPCShip);
+    }
+
+    /**
+     * Get a random player to spawn off of.
+     */
+    private IMyPlayer GetRandomPlayer() {
+      List<IMyPlayer> allPlayers = new List<IMyPlayer>();
+      MyAPIGateway.Players.GetPlayers(allPlayers);
+      if (allPlayers.Count() == 0) {
+        return null;
+      }
+      List<IMyPlayer> playerList = allPlayers.FindAll(p => p.IsBot == false);
+      return playerList[Util.rand.Next(playerList.Count())];
+    }
+
+    private void SpawnNPCShip() {
+      RegisterCargoShip();
+      if (Util.rand.NextDouble() < ComputeWarRatio()) {
+        SpawnMilitaryPatrol();
+      } else {
+        SpawnCargoShip();
+      }
+    }
+
+    private void SpawnMilitaryPatrol() {
     }
 
     private void SpawnCargoShip() {
-      long targetTick = GlobalData.world.currentTick
-          + Util.rand.Next(m_spawnTickIntervalMin, m_spawnTickIntervalMax);
-      EventManager.AddEvent(targetTick, SpawnCargoShip);
-
       if (m_empireData.civilianFleet.Count >= 2) {
         return;
       }
-      GroupInfo group = GetRandomSpawnGroup(SpawnerClass.CIVILIAN, m_empireData.credits);
-      if (group == null) {
-        return;
-      }
+
       IMyPlayer randomPlayer = GetRandomPlayer();
       if (randomPlayer == null) {
         return;
       }
-      Vector3D randLocation = MathExtender.RandomPointOnSphere(
-          randomPlayer.GetPosition(),
-          CARGOSHIP_SPAWN_DIST);
-      SpawnForGroup(group, EncounterType.TransientCargoship, randLocation);
+      SectorId originSector = m_empireData.ownedSectors[Util.rand.Next(m_empireData.ownedSectors.Count)];
+
+      Vector3D dirToSector = Vector3D.Normalize(SectorManager.CenterFromSector(originSector) - randomPlayer.GetPosition());
+      Vector3D crossPoint = MathExtender.RandomPerpendicularVector(dirToSector) * CARGOSHIP_CROSS_DIST;
+
+      GroupInfo group = GetRandomSpawnGroup(SpawnerClass.CIVILIAN, m_empireData.credits);
+      if (group == null) {
+        return;
+      }
+      Vector3D spawnStart = dirToSector * CARGOSHIP_SPAWN_DIST;
+      Vector3D spawnEnd = (crossPoint - spawnStart) * 2 + spawnStart;
+      SpawnForGroup(group, EncounterType.TransientCargoship, spawnStart, spawnEnd);
+    }
+
+    private double ComputeWarRatio() {
+      double peaceCounter = 0f;
+      double warCounter = 0f;
+      foreach (EmpireData empire in GlobalData.world.empires) {
+        EmpireStanding standings = Diplomacy.FindStandings(m_empireData, empire);
+        if (standings == null) {
+          continue;
+        }
+        if ((Diplomacy.EmpireType)empire.empireType == Diplomacy.EmpireType.TRUE_HOSTILE) {
+          continue;
+        }
+        if (standings.atWar) {
+          warCounter += 1.0f;
+        } else {
+          peaceCounter += 1.0f;
+        }
+      }
+      return warCounter / (warCounter + peaceCounter);
     }
   }
 

@@ -47,6 +47,28 @@
         </Prefab>
       </Prefabs>
     </SpawnGroup>
+    <SpawnGroup>
+      <Id>
+        <TypeId>SpawnGroupDefinition</TypeId>
+        <SubtypeId>(UEFA) [Type:C:CRGO,Cost:0] Cargo Tug</SubtypeId>
+      </Id>
+      <Icon>Textures\GUI\Icons\Fake.dds</Icon>
+      <BeaconText>Shipment S102</BeaconText>
+      <IsPirate>true</IsPirate>
+      <IsEncounter>false</IsEncounter>
+      <Speed>0.0</Speed>
+      <Frequency>100</Frequency>
+      <Prefabs>
+        <Prefab SubtypeId="FSTC UEFA Small Cargo Tug">
+          <Position>
+            <X>0.0</X>
+            <Y>0.0</Y>
+            <Z>0.0</Z>
+          </Position>
+          <Speed>0</Speed>
+        </Prefab>
+      </Prefabs>
+    </SpawnGroup>
 
     <SpawnGroup>
       <Id>
@@ -139,6 +161,7 @@
         </Prefab>
       </Prefabs>
     </SpawnGroup>
+
     <SpawnGroup>
       <Id>
         <TypeId>SpawnGroupDefinition</TypeId>

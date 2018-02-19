@@ -33,6 +33,13 @@ namespace FSTC {
       return new Vector3D(x, y, z) * radius + center;
     }
 
+    public static Vector3D RandomPerpendicularVector(Vector3D axis) {
+      Vector3D tangent = Vector3D.CalculatePerpendicularVector(axis);
+      Vector3D bitangent = Vector3D.Cross(axis, tangent);
+      double angle = Util.rand.NextDouble() * 2 * MathHelper.Pi;
+      return Math.Cos(angle) * tangent + Math.Sin(angle) * bitangent;
+    }
+
   };
 
 } // namespace FSTC
