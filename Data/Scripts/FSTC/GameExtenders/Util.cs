@@ -11,6 +11,12 @@ namespace FSTC {
 
     public static Random rand = new Random();
 
+    public static void Swap<T>(ref T lhs, ref T rhs) {
+      T temp = lhs;
+      lhs = rhs;
+      rhs = temp;
+    }
+
     /**
      * Display player-visible notification.
      */

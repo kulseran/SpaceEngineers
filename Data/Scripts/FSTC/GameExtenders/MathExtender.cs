@@ -39,7 +39,6 @@ namespace FSTC {
       double angle = Util.rand.NextDouble() * 2 * MathHelper.Pi;
       return Math.Cos(angle) * tangent + Math.Sin(angle) * bitangent;
     }
-
   };
 
 } // namespace FSTC

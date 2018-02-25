@@ -28,7 +28,7 @@ namespace FSTC {
     private static readonly double SPAWNER_SEARCH_RADIUS = 10.0;
 
     private static readonly float CARGOSHIP_SPEED = 30.0f;
-    private static readonly float CARGOSHIP_SPAWN_DIST = 10000f;
+    private static readonly float CARGOSHIP_SPAWN_DIST = 9000f;
     private static readonly float CARGOSHIP_CROSS_DIST = 5000f;
 
     /**
@@ -210,16 +210,8 @@ namespace FSTC {
     }
 
     /**
-     * Spawn at the edge of a 10Km sphere around the player
-    public void SpawnForPlayer(GroupInfo group, IMyPlayer player) {
-
-      SpawnForGroup(group, randomSpawn);
-    }
-     */
-
-    /**
      * Spawn at the edge of a 200m sphere around the entity
-    public void SpawnForEntity(GroupInfo group, IMyEntity entity) {
+    public void SpawnForAntenna(GroupInfo group, IMyEntity entity) {
 
       SpawnForGroup(group, randomSpawn);
     }
@@ -284,7 +276,6 @@ namespace FSTC {
       if (encounterType == EncounterType.TransientCargoship) {
         spawnOptions = spawnOptions | SpawningOptions.DisableDampeners;
       }
-
 
       MyAPIGateway.PrefabManager.SpawnPrefab(
           resultList: tempSpawningList,
@@ -352,17 +343,40 @@ namespace FSTC {
 
       if (encounterType == EncounterType.TransientAttackship || encounterType == EncounterType.TransientCargoship) {
         EventManager.AddEvent(
-            GlobalData.world.currentTick + Tick.Seconds(60),
-            () => DespawnDrone(entity.EntityId));
+            GlobalData.world.currentTick + Tick.Minutes(10),
+            () => DespawnDrone(ship));
+        BotManager.CreateBot(BotManager.BotType.CargoShip, remote);
       }
       Util.Log("Drone Prepped!");
     }
 
-    public void DespawnDrone(long entityId) {
-      IMyEntity entity = MyAPIGateway.Entities.GetEntityById(entityId);
+    public void DespawnDrone(SpawnedShip ship) {
+      bool managed = false;
+      managed |= m_empireData.civilianFleet.Remove(ship);
+      managed |= m_empireData.militaryFleet.Remove(ship);
+
+      IMyEntity entity = MyAPIGateway.Entities.GetEntityById(ship.entityId);
       if (entity == null) {
         return;
       }
+      if (!managed) {
+        // Player captured me!
+        // Only despawn me if I'm more than 20K from the player.
+      }
+
+      GroupInfo info = m_spawnGroups.Find(g => g.m_spawnGroupDef.Id.SubtypeName == ship.prefabId);
+      if (info != null) {
+        m_empireData.credits += info.m_cost;
+      }
+
+      IMyInventory inventory = entity.GetInventory();
+      if (inventory != null) {
+        foreach (IMyInventoryItem item in inventory.GetItems()) {
+          // TODO: actually value each type of item differently.
+          m_empireData.credits += item.Amount.ToIntSafe() * 10;
+        }
+      }
+
       BlockManagement.DespawnShip((IMyCubeGrid)entity);
     }
 
@@ -452,10 +466,10 @@ namespace FSTC {
       //    s => MyAPIGateway.Entities.GetEntityById(s.entityId) == null);
 
       foreach (SpawnedShip shipInfo in m_empireData.civilianFleet) {
-        EventManager.AddEvent(shipInfo.despawnTick, () => DespawnDrone(shipInfo.entityId));
+        EventManager.AddEvent(shipInfo.despawnTick, () => DespawnDrone(shipInfo));
       }
       foreach (SpawnedShip shipInfo in m_empireData.militaryFleet) {
-        EventManager.AddEvent(shipInfo.despawnTick, () => DespawnDrone(shipInfo.entityId));
+        EventManager.AddEvent(shipInfo.despawnTick, () => DespawnDrone(shipInfo));
       }
     }
 
@@ -501,16 +515,20 @@ namespace FSTC {
         return;
       }
       SectorId originSector = m_empireData.ownedSectors[Util.rand.Next(m_empireData.ownedSectors.Count)];
-
-      Vector3D dirToSector = Vector3D.Normalize(SectorManager.CenterFromSector(originSector) - randomPlayer.GetPosition());
+      Vector3D sectorCenter = SectorManager.CenterFromSector(originSector);
+      Vector3D dirToSector = Vector3D.Normalize(sectorCenter - randomPlayer.GetPosition());
       Vector3D crossPoint = MathExtender.RandomPerpendicularVector(dirToSector) * CARGOSHIP_CROSS_DIST;
 
       GroupInfo group = GetRandomSpawnGroup(SpawnerClass.CIVILIAN, m_empireData.credits);
       if (group == null) {
         return;
       }
-      Vector3D spawnStart = dirToSector * CARGOSHIP_SPAWN_DIST;
-      Vector3D spawnEnd = (crossPoint - spawnStart) * 2 + spawnStart;
+      Vector3D routeDir = Vector3D.Normalize(sectorCenter - crossPoint);
+      if (Util.rand.NextDouble() < 0.5) {
+        routeDir *= -1;
+      }
+      Vector3D spawnStart = crossPoint - (routeDir * CARGOSHIP_SPAWN_DIST);
+      Vector3D spawnEnd = crossPoint + (routeDir * CARGOSHIP_SPAWN_DIST * 10);
       SpawnForGroup(group, EncounterType.TransientCargoship, spawnStart, spawnEnd);
     }
 

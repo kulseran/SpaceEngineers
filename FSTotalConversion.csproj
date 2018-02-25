@@ -151,12 +151,25 @@
     <None Include="Data\GlobalEvents.sbc">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Data\prefabs\EIEF\FSTC EIEF HQ.sbc" />
+    <None Include="Data\prefabs\IFTA\FSTC IFTA HQ.sbc" />
     <None Include="Data\prefabs\Neutral\FSTC Comsat.sbc" />
     <None Include="Data\prefabs\Neutral\FSTC Nav Beacon.sbc" />
+    <None Include="Data\prefabs\SHVN\FSTC SHVN HQ.sbc" />
+    <None Include="Data\prefabs\SPRT\FSTC SPRT HQ.sbc" />
+    <None Include="Data\prefabs\SYND\FSTC SYND HQ.sbc" />
+    <None Include="Data\prefabs\UEFA\FSTC UEFA HQ.sbc" />
+    <None Include="Data\prefabs\UEFA\FSTC UEFA Small Cargo Tug.sbc">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Data\prefabs\XGTC\FSTC XGTC HQ.sbc" />
     <None Include="Data\SpawnGroups.sbc" />
     <None Include="deploy.sh" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\scripts\FSTC\Bots\BotBase.cs" />
+    <Compile Include="Data\scripts\FSTC\Bots\BotManager.cs" />
+    <Compile Include="Data\scripts\FSTC\Bots\CargoBot.cs" />
     <Compile Include="Data\scripts\FSTC\Diplomacy.cs" />
     <Compile Include="Data\scripts\FSTC\EmpireManager.cs" />
     <Compile Include="Data\scripts\FSTC\EventManager.cs" />
