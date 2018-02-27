@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<Definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Definition xsi:type="EnvironmentDefinition">
+    <Id>
+      <TypeId>EnvironmentDefinition</TypeId>
+      <SubtypeId>Default</SubtypeId>
+    </Id>
+
+    <!-- Skybox: Milkyway -->
+    <EnvironmentTexture>Textures\BackgroundCube\mwsky4096.dds</EnvironmentTexture>
+    <EnvironmentOrientation Yaw="60.3955536" Pitch="-61.1861954" Roll="90.90578" />
+
+    <!-- Less bloomy planets -->
+    <PlanetProperties>
+      <AtmosphereIntensityMultiplier>4</AtmosphereIntensityMultiplier>
+      <AtmosphereIntensityAmbientMultiplier>7</AtmosphereIntensityAmbientMultiplier>
+      <CloudsIntensityMultiplier>4</CloudsIntensityMultiplier>
+    </PlanetProperties>
+
+    <!-- Space Fog!(tm) -->
+    <!-- Sun -->
+    <SunProperties>
+      <SunIntensity>10</SunIntensity>
+      <EnvironmentLight>
+        <SunColor>
+          <X>1</X>
+          <Y>0.95</Y>
+          <Z>0.9</Z>
+        </SunColor>
+        <SunDiscColor>
+          <X>1.0</X>
+          <Y>0.95</Y>
+          <Z>0.9</Z>
+        </SunDiscColor>
+        <SunDiscInnerDot>0.999</SunDiscInnerDot>
+        <SunDiscOuterDot>0.9987</SunDiscOuterDot>
+
+        <SunDiffuseFactor>1.0</SunDiffuseFactor>
+        <SunGlossFactor>0.8</SunGlossFactor>
+
+        <AmbientDiffuseFactor>1.0</AmbientDiffuseFactor>
+        <AmbientSpecularFactor>1.15</AmbientSpecularFactor>
+        <AmbientRadius>50.0</AmbientRadius>
+        <AmbientLightsGatherRadius>15.0</AmbientLightsGatherRadius>
+
+        <SkyboxBrightness>1</SkyboxBrightness>
+        <EnvSkyboxBrightness>0.140</EnvSkyboxBrightness>
+        <EnvAtmosphereBrightness>0.6</EnvAtmosphereBrightness>
+        <SunDiscIntensity>1.9</SunDiscIntensity>
+
+      </EnvironmentLight>
+      <TextureMultipliers>
+        <GlossMultiplier>1.0</GlossMultiplier>
+      </TextureMultipliers>
+
+    </SunProperties>
+
+
+    <!-- PostProcessing -->
+    <PostProcessSettings>
+      <DirtTexture>Textures\SunGlare\NoDirt.dds</DirtTexture>
+      
+      <Data>
+        <ChromaticFactor>0.0</ChromaticFactor>
+        <LightColor>
+          <X>1</X>
+          <Y>0.9</Y>
+          <Z>0.5</Z>
+        </LightColor>
+        <DarkColor>
+          <X>0.2</X>
+          <Y>0.05</Y>
+          <Z>0</Z>
+        </DarkColor>
+
+        <ConstantLuminance>0.1</ConstantLuminance>
+        <LuminanceExposure>0.0</LuminanceExposure>
+
+        <BloomExposure>5.04930735</BloomExposure>
+        <BloomLumaThreshold>5.0</BloomLumaThreshold>
+        <BloomMult>0.05</BloomMult>
+        <BloomEmissiveness>40</BloomEmissiveness>
+        <BloomDepthStrength>2.0</BloomDepthStrength>
+        <BloomDepthSlope>0.3</BloomDepthSlope>
+        <LogLumThreshold>-4</LogLumThreshold>
+
+        <Vibrance>0.2</Vibrance>
+        <VignetteStart>1.5</VignetteStart>
+        <VignetteLength>1.0</VignetteLength>
+      </Data>
+    </PostProcessSettings>
+
+
+  </Definition>
+</Definitions>

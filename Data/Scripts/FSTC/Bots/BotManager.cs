@@ -2,6 +2,7 @@
 using Sandbox.ModAPI;
 using System.Collections.Generic;
 using VRage.Game.ModAPI;
+using static FSTC.FSTCData;
 
 namespace FSTC {
 
@@ -14,11 +15,11 @@ namespace FSTC {
 
     private static List<BotBase> m_activeBots = new List<BotBase>();
 
-    public static BotBase CreateBot(BotType botType, IMyRemoteControl remote) {
+    public static BotBase CreateBot(BotType botType, SpawnedShip ship, IMyRemoteControl remote) {
       BotBase bot = null;
       switch (botType) {
         case BotType.CargoShip:
-          bot = new CargoBot(remote);
+          bot = new CargoBot(ship, remote);
           break;
         case BotType.Fighter:
           break;

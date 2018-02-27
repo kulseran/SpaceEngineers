@@ -185,6 +185,7 @@
     <Compile Include="Data\scripts\FSTC\ModData\FSTCData.cs" />
     <Compile Include="Data\scripts\FSTC\ModData\FSTCDataInit.cs" />
     <Compile Include="Data\scripts\FSTC\ModData\GlobalData.cs" />
+    <Compile Include="Data\scripts\FSTC\PirateAntennaManager.cs" />
     <Compile Include="Data\scripts\FSTC\SectorManager.cs" />
     <Compile Include="Data\scripts\FSTC\SpawnManager.cs" />
   </ItemGroup>

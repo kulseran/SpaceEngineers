@@ -340,12 +340,11 @@ namespace FSTC {
       } else if (encounterType == EncounterType.TransientAttackship) {
         m_empireData.militaryFleet.Add(ship);
       }
+      ship.despawnTick = GlobalData.world.currentTick + Tick.Minutes(10);
 
       if (encounterType == EncounterType.TransientAttackship || encounterType == EncounterType.TransientCargoship) {
-        EventManager.AddEvent(
-            GlobalData.world.currentTick + Tick.Minutes(10),
-            () => DespawnDrone(ship));
-        BotManager.CreateBot(BotManager.BotType.CargoShip, remote);
+        EventManager.AddEvent(ship.despawnTick, () => DespawnDrone(ship));
+        BotManager.CreateBot(BotManager.BotType.CargoShip, ship, remote);
       }
       Util.Log("Drone Prepped!");
     }
