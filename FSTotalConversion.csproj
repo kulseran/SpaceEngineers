@@ -170,6 +170,7 @@
     <Compile Include="Data\scripts\FSTC\Bots\BotBase.cs" />
     <Compile Include="Data\scripts\FSTC\Bots\BotManager.cs" />
     <Compile Include="Data\scripts\FSTC\Bots\CargoBot.cs" />
+    <Compile Include="Data\scripts\FSTC\Bots\StationBot.cs" />
     <Compile Include="Data\scripts\FSTC\Diplomacy.cs" />
     <Compile Include="Data\scripts\FSTC\EmpireManager.cs" />
     <Compile Include="Data\scripts\FSTC\EventManager.cs" />

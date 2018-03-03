@@ -344,7 +344,7 @@ namespace FSTC {
 
       if (encounterType == EncounterType.TransientAttackship || encounterType == EncounterType.TransientCargoship) {
         EventManager.AddEvent(ship.despawnTick, () => DespawnDrone(ship));
-        BotManager.CreateBot(BotManager.BotType.CargoShip, ship, remote);
+        BotManager.CreateBot(BotManager.BotType.CargoShip, this, ship, remote);
       }
       Util.Log("Drone Prepped!");
     }

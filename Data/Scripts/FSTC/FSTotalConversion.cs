@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Sandbox.Definitions;
+using Sandbox.Game.Entities;
 using Sandbox.ModAPI;
 using VRage.Game.Components;
 using VRage.Game.ModAPI;
 using VRage.ModAPI;
+using VRageMath;
 using static FSTC.FSTCData;
 
 namespace FSTC {
@@ -16,6 +18,8 @@ namespace FSTC {
     private readonly string SAVEFILE_NAME = "FSTC.xml";
 
     private List<EmpireManager> m_empireManagers = new List<EmpireManager>();
+
+    public EmpireData EmpireData { get; private set; }
 
     /**
      *
@@ -82,8 +86,9 @@ namespace FSTC {
     public override void UpdateBeforeSimulation() {
       GlobalData.NextTick();
       EventManager.TriggerEvents(GlobalData.world.currentTick);
-      MyAPIGateway.Session.DamageSystem.RegisterBeforeDamageHandler(0, GenericDamageHandler);
-      MyAPIGateway.Session.DamageSystem.RegisterDestroyHandler(0, GenericDamageHandler);
+    }
+
+    public override void Draw() {
     }
 
     private void GenericDamageHandler(object target, ref MyDamageInformation info) {
@@ -104,10 +109,13 @@ namespace FSTC {
       IMyCubeGrid damagerShip;
       if (damageeFaction != null
           && info.GetSource(out damagerPlayer, out damagerFaction, out damagerShip)) {
-
+        if (damagerFaction == null) {
+          return;
+        }
+        EmpireData damagerEmpire = damagerFaction.GetEmpire();
         foreach (EmpireManager empire in m_empireManagers) {
           if (empire.GetData().empireTag == damageeFaction.Tag) {
-            empire.TakeStandingsHit(damagerFaction.GetEmpire());
+            empire.TakeStandingsHit(damagerEmpire);
             break;
           }
         }
@@ -125,6 +133,9 @@ namespace FSTC {
         empire.Initialize();
       }
       Diplomacy.Initialize();
+
+      MyAPIGateway.Session.DamageSystem.RegisterBeforeDamageHandler(0, GenericDamageHandler);
+      MyAPIGateway.Session.DamageSystem.RegisterDestroyHandler(0, GenericDamageHandler);
 
       Util.Notify("Welcome to FSTC.");
     }

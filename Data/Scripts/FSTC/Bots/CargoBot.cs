@@ -1,5 +1,4 @@
 using Sandbox.ModAPI;
-using VRage.Game.ModAPI;
 using static FSTC.FSTCData;
 
 namespace FSTC {
@@ -11,7 +10,8 @@ namespace FSTC {
     private static readonly float CARGOSHIP_BEACON_RADIUS = 15000.0f;
     private static readonly float CARGOSHIP_ANTENNA_RADIUS = 5000.0f;
 
-    public CargoBot(SpawnedShip spawnedShip, IMyRemoteControl remote) : base(spawnedShip, remote) {
+    public CargoBot(SpawnManager manager, SpawnedShip spawnedShip, IMyRemoteControl remote)
+        : base(manager, spawnedShip, remote) {
       EventManager.AddEvent(m_spawnedShip.despawnTick, UpdateDespawn);
       EventManager.AddEvent(GlobalData.world.currentTick + CALL_HELP_TICKS, UpdateCallHelp);
       SetupCallsign();
@@ -32,7 +32,7 @@ namespace FSTC {
         return;
       }
       // Check for enemies!
-      bool foundEnemy = false;
+      bool foundEnemy = GetClosestEnemy(CARGOSHIP_ANTENNA_RADIUS / 2.0f) != null;
 
       // If nothing, turn off the antenna!
       if (foundEnemy) {

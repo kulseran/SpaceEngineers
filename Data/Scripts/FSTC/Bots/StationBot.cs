@@ -1,0 +1,3 @@
+namespace FSTC {
+
+} // namespace FSTC

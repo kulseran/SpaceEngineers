@@ -15,11 +15,11 @@ namespace FSTC {
 
     private static List<BotBase> m_activeBots = new List<BotBase>();
 
-    public static BotBase CreateBot(BotType botType, SpawnedShip ship, IMyRemoteControl remote) {
+    public static BotBase CreateBot(BotType botType, SpawnManager manager, SpawnedShip ship, IMyRemoteControl remote) {
       BotBase bot = null;
       switch (botType) {
         case BotType.CargoShip:
-          bot = new CargoBot(ship, remote);
+          bot = new CargoBot(manager, ship, remote);
           break;
         case BotType.Fighter:
           break;
