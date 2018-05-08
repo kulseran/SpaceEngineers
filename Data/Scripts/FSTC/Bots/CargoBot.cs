@@ -1,4 +1,5 @@
 using Sandbox.ModAPI;
+using VRage.Game.ModAPI;
 using static FSTC.FSTCData;
 
 namespace FSTC {
@@ -52,6 +53,11 @@ namespace FSTC {
         return;
       }
 
+      IMyPlayer player = MyAPIGateway.Players.GetClosestPlayer(m_remote.GetPosition());
+      if (player == null
+          || player.GetPosition().DistanceTo(m_remote.GetPosition()) > (CARGOSHIP_ANTENNA_RADIUS / 2.0f)) {
+        m_spawnManager.DespawnDrone(m_spawnedShip);
+      }
       EventManager.AddEvent(GlobalData.world.currentTick + DESPAWN_RETRY_TICKS, UpdateDespawn);
     }
 

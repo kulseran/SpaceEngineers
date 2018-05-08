@@ -1,6 +1,7 @@
 using Sandbox.ModAPI;
 using System.Collections.Generic;
 using VRage.Game.ModAPI;
+using VRageMath;
 using static FSTC.FSTCData;
 
 namespace FSTC {
@@ -20,6 +21,24 @@ namespace FSTC {
         return players[0];
       }
       return null;
+    }
+    
+    /**
+     * Return the player closest to the target location.
+     */
+    public static IMyPlayer GetClosestPlayer(this IMyPlayerCollection playersIn, Vector3D target) {
+      List<IMyPlayer> players = new List<IMyPlayer>();
+      playersIn.GetPlayers(players);
+      IMyPlayer closest = null;
+      double dist = double.MaxValue;
+      foreach(IMyPlayer player in players) {
+        double curdist = player.GetPosition().DistanceTo(target);
+        if (curdist < dist) {
+          dist = curdist;
+          closest = player;
+        }
+      }
+      return closest;
     }
 
     public static EmpireData GetEmpire(this IMyFaction faction) {
